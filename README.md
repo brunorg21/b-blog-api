@@ -10,7 +10,10 @@ The primary focus of this project is to enhance my skills in implementing a mess
 
 - **Users can register**
 - **Users can login with e-mail**
-- **Users create a community**
+- **Users can create/update/delete a community**
+- **Users can search communities**
+- **Users can invite another users to participate in communities**
+- **Users can create posts in communities**
 - **Users can search posts by topic**
 - **Users can follow another users**
 - **Users can create/update/delete new post**
