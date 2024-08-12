@@ -1,21 +1,19 @@
 import { randomUUID } from "crypto";
 
-interface PostProps {
-  title: string;
-  content: string;
+interface PostCommentProps {
+  postId: string;
   authorId: string;
-  communityId: string;
+  content: string;
   createdAt: Date;
   updatedAt: Date | null;
-  attachments: string[];
 }
 
-export class Post {
+export class PostComment {
   protected id: string;
-  constructor(private props: PostProps, postId?: string) {
+  constructor(private props: PostCommentProps, postCommentId?: string) {
     this.props = props;
-    if (postId) {
-      this.id = postId;
+    if (postCommentId) {
+      this.id = postCommentId;
     }
 
     this.id = randomUUID();
@@ -24,33 +22,25 @@ export class Post {
   get _id() {
     return this.id;
   }
-  get title() {
-    return this.props.title;
-  }
   get content() {
     return this.props.content;
   }
   get authorId() {
     return this.props.authorId;
   }
-  get communityId() {
-    return this.props.communityId;
-  }
 
-  get attchments() {
-    return this.props.attachments;
-  }
   get createdAt() {
     return this.props.createdAt;
+  }
+
+  get postId() {
+    return this.props.postId;
   }
 
   get updatedAt() {
     return this.props.updatedAt;
   }
 
-  set title(title: string) {
-    this.props.title = title;
-  }
   set content(content: string) {
     this.props.content = content;
   }
@@ -58,27 +48,21 @@ export class Post {
     this.props.authorId = authorId;
   }
 
-  set communityId(communityId: string) {
-    this.props.communityId = communityId;
-  }
-
   static create(
-    props: Omit<PostProps, "createdAt" | "updatedAt">,
+    props: Omit<PostCommentProps, "createdAt" | "updatedAt">,
     id?: string
   ) {
-    const post = new Post(
+    const postComment = new PostComment(
       {
         authorId: props.authorId,
-        communityId: props.communityId,
         content: props.content,
         createdAt: new Date(),
-        title: props.title,
         updatedAt: null,
-        attachments: props.attachments,
+        postId: props.postId,
       },
       id
     );
 
-    return post;
+    return postComment;
   }
 }
