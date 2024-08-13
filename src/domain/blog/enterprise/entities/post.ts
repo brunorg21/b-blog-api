@@ -4,21 +4,17 @@ interface PostProps {
   title: string;
   content: string;
   authorId: string;
-  communityId: string;
+  bloggersCommunityId: string | null;
   createdAt: Date;
   updatedAt: Date | null;
   attachments: string[];
 }
 
 export class Post {
-  protected id: string;
+  private id: string;
   constructor(private props: PostProps, postId?: string) {
     this.props = props;
-    if (postId) {
-      this.id = postId;
-    }
-
-    this.id = randomUUID();
+    this.id = postId ?? randomUUID();
   }
 
   get _id() {
@@ -33,8 +29,8 @@ export class Post {
   get authorId() {
     return this.props.authorId;
   }
-  get communityId() {
-    return this.props.communityId;
+  get bloggersCommunityId() {
+    return this.props.bloggersCommunityId;
   }
 
   get attchments() {
@@ -58,8 +54,8 @@ export class Post {
     this.props.authorId = authorId;
   }
 
-  set communityId(communityId: string) {
-    this.props.communityId = communityId;
+  set bloggersCommunityId(bloggersCommunityId: string | null) {
+    this.props.bloggersCommunityId = bloggersCommunityId;
   }
 
   static create(
@@ -69,7 +65,7 @@ export class Post {
     const post = new Post(
       {
         authorId: props.authorId,
-        communityId: props.communityId,
+        bloggersCommunityId: props.bloggersCommunityId,
         content: props.content,
         createdAt: new Date(),
         title: props.title,
