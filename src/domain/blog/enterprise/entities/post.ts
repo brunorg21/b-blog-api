@@ -8,6 +8,7 @@ interface PostProps {
   createdAt: Date;
   updatedAt: Date | null;
   attachments: string[];
+  topics: string[];
 }
 
 export class Post {
@@ -44,6 +45,10 @@ export class Post {
     return this.props.updatedAt;
   }
 
+  get topics() {
+    return this.props.topics;
+  }
+
   set title(title: string) {
     this.props.title = title;
   }
@@ -71,6 +76,7 @@ export class Post {
         title: props.title,
         updatedAt: null,
         attachments: props.attachments,
+        topics: props.topics,
       },
       id
     );
