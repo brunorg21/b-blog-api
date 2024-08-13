@@ -6,7 +6,7 @@ describe("create post comment on post", () => {
   it("should be able to create a post comment in a post", () => {
     const post = Post.create({
       authorId: "author-id",
-      communityId: "community-id",
+      bloggersCommunityId: "community-id",
       content: "teste",
       title: "Teste",
       attachments: [],
