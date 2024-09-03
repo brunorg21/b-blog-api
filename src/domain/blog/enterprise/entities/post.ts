@@ -5,9 +5,8 @@ interface PostProps {
   content: string;
   authorId: string;
   bloggersCommunityId: string | null;
-  createdAt: Date;
+  createdAt?: Date;
   updatedAt: Date | null;
-  attachments: string[];
   topics: string[];
 }
 
@@ -34,9 +33,6 @@ export class Post {
     return this.props.bloggersCommunityId;
   }
 
-  get attchments() {
-    return this.props.attachments;
-  }
   get createdAt() {
     return this.props.createdAt;
   }
@@ -51,16 +47,27 @@ export class Post {
 
   set title(title: string) {
     this.props.title = title;
+    this.update();
   }
   set content(content: string) {
     this.props.content = content;
+    this.update();
   }
   set authorId(authorId: string) {
     this.props.authorId = authorId;
   }
 
+  set topics(topics: string[]) {
+    this.props.topics = topics;
+    this.update();
+  }
+
   set bloggersCommunityId(bloggersCommunityId: string | null) {
     this.props.bloggersCommunityId = bloggersCommunityId;
+  }
+
+  private update() {
+    this.props.updatedAt = new Date();
   }
 
   static create(
@@ -75,7 +82,6 @@ export class Post {
         createdAt: new Date(),
         title: props.title,
         updatedAt: null,
-        attachments: props.attachments,
         topics: props.topics,
       },
       id
