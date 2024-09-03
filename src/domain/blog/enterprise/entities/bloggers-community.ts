@@ -34,6 +34,12 @@ export class BloggersCommunity {
   get avatarUrl() {
     return this.props.avatarUrl;
   }
+  get createdAt() {
+    return this.props.createdAt;
+  }
+  get updatedAt() {
+    return this.props.updatedAt;
+  }
 
   get slug() {
     return this.props.slug;
