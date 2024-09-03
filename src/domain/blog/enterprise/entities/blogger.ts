@@ -6,6 +6,8 @@ interface BloggerProps {
   password: string;
   avatarUrl: string | null;
   bloggersCommunityId: string | null;
+  createdAt: Date;
+  updatedAt: Date | null;
 }
 
 export class Blogger {
@@ -35,6 +37,12 @@ export class Blogger {
   get avatarUrl() {
     return this.props.avatarUrl;
   }
+  get createdAt() {
+    return this.props.createdAt;
+  }
+  get updatedAt() {
+    return this.props.updatedAt;
+  }
 
   get bloggersCommunityId() {
     return this.props.bloggersCommunityId;
@@ -48,6 +56,8 @@ export class Blogger {
         email: props.email,
         name: props.name,
         password: props.password,
+        createdAt: new Date(),
+        updatedAt: null,
       },
       id
     );
