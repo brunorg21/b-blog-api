@@ -1,4 +1,3 @@
-import { Post } from "@/domain/blog/enterprise/entities/post";
 import { InMemoryPostRepository } from "test/in-memory-repositories/in-memory-post-repository";
 import { describe, expect, it } from "vitest";
 import { CreatePostUseCase } from "./create-post-use-case";
