@@ -1,4 +1,3 @@
-import { Post } from "@/domain/blog/enterprise/entities/post";
 import { PostRepository } from "../../repositories/post-repostitory";
 import { ResourceNotFoundError } from "../@errors/resource-not-found-error";
 
