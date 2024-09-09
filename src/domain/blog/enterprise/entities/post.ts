@@ -11,14 +11,14 @@ interface PostProps {
 }
 
 export class Post {
-  private id: string;
+  private _id: string;
   constructor(private props: PostProps, postId?: string) {
     this.props = props;
-    this.id = postId ?? randomUUID();
+    this._id = postId ?? randomUUID();
   }
 
-  get _id() {
-    return this.id;
+  get id() {
+    return this._id;
   }
   get title() {
     return this.props.title;
