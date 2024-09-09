@@ -20,11 +20,11 @@ describe("get unique post", () => {
     await repository.save(newPost);
 
     const { post } = await useCase.execute({
-      id: newPost._id,
+      id: newPost.id,
     });
 
     expect(repository.posts).toHaveLength(1);
-    expect(post._id).toEqual(expect.any(String));
+    expect(post.id).toEqual(expect.any(String));
   });
 
   it("should not be able to get unique a post with invalid id", async () => {
