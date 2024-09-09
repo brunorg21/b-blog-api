@@ -7,7 +7,7 @@ export class InMemoryPostRepository implements PostRepository {
     this.posts.push(post);
   }
   async getById(id: string): Promise<Post | null> {
-    const post = this.posts.find((post) => post._id === id);
+    const post = this.posts.find((post) => post.id === id);
 
     if (!post) {
       return null;
@@ -19,11 +19,11 @@ export class InMemoryPostRepository implements PostRepository {
     return this.posts;
   }
   async update(post: Post): Promise<void> {
-    const postIndex = this.posts.findIndex((p) => p._id === post._id);
+    const postIndex = this.posts.findIndex((p) => p.id === post.id);
     this.posts[postIndex] = post;
   }
   async delete(post: Post): Promise<void> {
-    const posts = this.posts.filter((p) => p._id !== post._id);
+    const posts = this.posts.filter((p) => p.id !== post.id);
 
     this.posts = posts;
   }
