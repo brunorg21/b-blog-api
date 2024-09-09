@@ -7,7 +7,8 @@ interface BloggerProps {
   avatarUrl: string | null;
   bloggersCommunityId: string | null;
   createdAt: Date;
-  updatedAt: Date | null;
+  updatedAt?: Date | null;
+  role: "ADMIN" | "COMMON";
 }
 
 export class Blogger {
@@ -48,6 +49,10 @@ export class Blogger {
     return this.props.bloggersCommunityId;
   }
 
+  get role() {
+    return this.props.role;
+  }
+
   static create(props: BloggerProps, id?: string) {
     const blogger = new Blogger(
       {
@@ -58,6 +63,7 @@ export class Blogger {
         password: props.password,
         createdAt: new Date(),
         updatedAt: null,
+        role: props.role,
       },
       id
     );
