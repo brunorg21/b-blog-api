@@ -5,8 +5,8 @@ interface BloggerProps {
   email: string;
   password: string;
   avatarUrl: string | null;
-  bloggersCommunityId: string | null;
-  createdAt: Date;
+  bloggersCommunities: string[] | null;
+  createdAt?: Date;
   updatedAt?: Date | null;
   role: "ADMIN" | "COMMON";
 }
@@ -45,8 +45,21 @@ export class Blogger {
     return this.props.updatedAt;
   }
 
-  get bloggersCommunityId() {
-    return this.props.bloggersCommunityId;
+  set password(password: string) {
+    this.props.password = password;
+  }
+  set name(name: string) {
+    this.props.name = name;
+  }
+  set email(email: string) {
+    this.props.email = email;
+  }
+  set avatarUrl(avatarUrl: string | null) {
+    this.props.avatarUrl = avatarUrl;
+  }
+
+  get bloggersCommunities() {
+    return this.props.bloggersCommunities;
   }
 
   get role() {
@@ -57,7 +70,7 @@ export class Blogger {
     const blogger = new Blogger(
       {
         avatarUrl: props.avatarUrl,
-        bloggersCommunityId: props.bloggersCommunityId,
+        bloggersCommunities: props.bloggersCommunities,
         email: props.email,
         name: props.name,
         password: props.password,
