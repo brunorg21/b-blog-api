@@ -1,3 +1,4 @@
+import { generateSlug } from "@/core/generate-slug";
 import { randomUUID } from "node:crypto";
 
 interface BloggersCommunityProps {
@@ -49,6 +50,25 @@ export class BloggersCommunity {
     return this.props.authorId;
   }
 
+  set description(description: string) {
+    this.props.description = description;
+    this.update();
+  }
+
+  set name(name: string) {
+    this.props.name = name;
+    this.update();
+  }
+
+  set slug(slug: string) {
+    this.props.slug = slug;
+    this.update();
+  }
+
+  private update() {
+    this.props.updatedAt = new Date();
+  }
+
   static create(
     props: Omit<BloggersCommunityProps, "createdAt" | "updatedAt">,
     id?: string
@@ -59,7 +79,7 @@ export class BloggersCommunity {
         createdAt: new Date(),
         description: props.description,
         name: props.name,
-        slug: props.slug,
+        slug: generateSlug(props.slug),
         updatedAt: null,
         authorId: props.authorId,
       },
