@@ -1,5 +1,4 @@
 import { Entity } from "@/core/entity";
-import { randomUUID } from "crypto";
 
 export interface CommentProps {
   authorId: string;
