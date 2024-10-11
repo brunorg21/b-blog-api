@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "lib": ["ESNext"],
-    "module": "esnext",
-    "target": "esnext",
+    "module": "ESNext",
+    "target": "ESNext",
     "moduleResolution": "bundler",
     "noEmit": true,
     "allowImportingTsExtensions": true,
@@ -10,11 +10,14 @@
     "jsx": "react-jsx",
     "allowJs": true, 
     "strict": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "composite": true,
     "downlevelIteration": true,
     "allowSyntheticDefaultImports": true ,
+    "strictPropertyInitialization": false,
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
