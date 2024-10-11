@@ -30,9 +30,26 @@ export class PostCommentLikeUseCase {
       throw new ResourceNotFoundError();
     }
 
+    const postCommentWithLikes =
+      await this.postCommentLikeRepository.getByCommentId(postComment.id);
+
+    if (postCommentWithLikes) {
+      postCommentWithLikes.count += 1;
+
+      await this.postCommentLikeRepository.save(postCommentWithLikes);
+
+      await this.onLikeCommentSubscriber.execute({
+        commentId: postComment.id,
+        likeCommentAuthorId: authorId,
+      });
+
+      return { postCommentLike: postCommentWithLikes };
+    }
+
     const postCommentLike = PostCommentLike.create({
       authorId,
       commentId: postComment.id,
+      count: 1,
     });
 
     await this.postCommentLikeRepository.save(postCommentLike);

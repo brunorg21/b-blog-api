@@ -1,5 +1,7 @@
 import { Post } from "@/domain/blog/enterprise/entities/post";
 import { PostRepository } from "../../repositories/post-repostitory";
+import { PostTopicsRepository } from "../../repositories/post-topics-repository";
+import { PostTopic } from "@/domain/blog/enterprise/entities/topic-post";
 
 interface CreatePostUseCaseRequest {
   title: string;
@@ -14,7 +16,10 @@ interface CreatePostUseCaseResponse {
 }
 
 export class CreatePostUseCase {
-  constructor(private readonly postRepository: PostRepository) {}
+  constructor(
+    private readonly postRepository: PostRepository,
+    private readonly postTopicsRepository: PostTopicsRepository
+  ) {}
   async execute(
     post: CreatePostUseCaseRequest
   ): Promise<CreatePostUseCaseResponse> {
@@ -23,10 +28,20 @@ export class CreatePostUseCase {
       bloggersCommunityId: post.bloggersCommunityId,
       content: post.content,
       title: post.title,
-      topics: post.topics,
     });
 
     await this.postRepository.save(newPost);
+
+    if (post.topics.length > 0) {
+      for (const topic of post.topics) {
+        await this.postTopicsRepository.save(
+          PostTopic.create({
+            postId: newPost.id,
+            topicId: topic,
+          })
+        );
+      }
+    }
 
     return { post: newPost };
   }

@@ -34,9 +34,25 @@ export class PostLikeUseCase {
       throw new ResourceNotFoundError();
     }
 
+    const postWithLikes = await this.postLikeRepository.getByPostId(post.id);
+
+    if (postWithLikes) {
+      postWithLikes.count += 1;
+
+      await this.postLikeRepository.save(postWithLikes);
+
+      await this.onLikePostSubscriber.execute({
+        likeAuthorId: authorId,
+        postId: post.id,
+      });
+
+      return { postLike: postWithLikes };
+    }
+
     const postLike = PostLike.create({
       authorId,
       postId: post.id,
+      count: 1,
     });
 
     await this.postLikeRepository.save(postLike);
