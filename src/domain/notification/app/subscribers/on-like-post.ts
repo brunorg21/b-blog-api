@@ -16,7 +16,7 @@ export class OnLikePostSubscriber {
   ) {}
 
   async execute({ postId, likeAuthorId }: OnLikePostSubscriberRequest) {
-    const post = await this.postLikeRepository.getById(postId);
+    const post = await this.postLikeRepository.getByPostId(postId);
 
     const blogger = await this.bloggerRepository.getById(postId);
 
