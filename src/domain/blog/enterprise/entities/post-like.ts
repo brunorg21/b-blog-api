@@ -9,11 +9,16 @@ export class PostLike extends Like<PostLikeProps> {
     return this.props.postId;
   }
 
-  static create(props: PostLikeProps, id?: string) {
+  static create(
+    props: Omit<PostLikeProps, "createdAt" | "updatedAt">,
+    id?: string
+  ) {
     const postLike = new PostLike(
       {
         ...props,
         authorId: props.authorId,
+        createdAt: new Date(),
+        updatedAt: null,
       },
       id
     );

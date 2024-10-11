@@ -1,26 +1,15 @@
-import { randomUUID } from "node:crypto";
+import { Entity } from "@/core/entity";
+import { generateSlug } from "@/core/generate-slug";
 
-interface TopicProps {
+export interface TopicProps {
   name: string;
   slug: string;
 }
 
-export class Topic {
-  private _id: string;
-
-  constructor(private props: TopicProps, id?: string) {
-    this.props = props;
-    this._id = id ?? randomUUID();
-  }
-
-  get id() {
-    return this._id;
-  }
-
+export class Topic extends Entity<TopicProps> {
   get name() {
     return this.props.name;
   }
-
   get slug() {
     return this.props.slug;
   }
@@ -28,12 +17,11 @@ export class Topic {
   static create(props: TopicProps, id?: string) {
     const topic = new Topic(
       {
-        name: props.name,
-        slug: props.slug,
+        ...props,
+        slug: generateSlug(props.name),
       },
       id
     );
-
     return topic;
   }
 }

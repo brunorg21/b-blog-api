@@ -5,7 +5,6 @@ interface BloggerProps {
   email: string;
   password: string;
   avatarUrl: string | null;
-  bloggersCommunities: string[] | null;
   createdAt?: Date;
   updatedAt?: Date | null;
   role: "ADMIN" | "COMMON";
@@ -58,10 +57,6 @@ export class Blogger {
     this.props.avatarUrl = avatarUrl;
   }
 
-  get bloggersCommunities() {
-    return this.props.bloggersCommunities;
-  }
-
   get role() {
     return this.props.role;
   }
@@ -70,7 +65,6 @@ export class Blogger {
     const blogger = new Blogger(
       {
         avatarUrl: props.avatarUrl,
-        bloggersCommunities: props.bloggersCommunities,
         email: props.email,
         name: props.name,
         password: props.password,

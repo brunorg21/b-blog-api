@@ -7,7 +7,6 @@ interface PostProps {
   bloggersCommunityId: string | null;
   createdAt?: Date;
   updatedAt: Date | null;
-  topics: string[];
 }
 
 export class Post {
@@ -41,10 +40,6 @@ export class Post {
     return this.props.updatedAt;
   }
 
-  get topics() {
-    return this.props.topics;
-  }
-
   set title(title: string) {
     this.props.title = title;
     this.update();
@@ -55,11 +50,6 @@ export class Post {
   }
   set authorId(authorId: string) {
     this.props.authorId = authorId;
-  }
-
-  set topics(topics: string[]) {
-    this.props.topics = topics;
-    this.update();
   }
 
   set bloggersCommunityId(bloggersCommunityId: string | null) {
@@ -82,7 +72,6 @@ export class Post {
         createdAt: new Date(),
         title: props.title,
         updatedAt: null,
-        topics: props.topics,
       },
       id
     );
