@@ -4,9 +4,7 @@
   "version": "1.0.0",
   "description": "Welcome to the b.blog Application! This is a fullstack web application built with **Next.js**, **React**, and **Node.js**. It allows users to create, read, update, and delete blog posts. The application also supports user authentication and commenting.",
   "main": "index.js",
-  "scripts": {
-    
-  },
+  "scripts": {},
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -15,9 +13,11 @@
     "@types/node": "^22.2.0",
     "tsx": "^4.17.0",
     "typescript": "^5.5.4"
-
   },
   "dependencies": {
-    "bcrypt": "^5.1.1"
+    "bcrypt": "^5.1.1",
+    "pg": "^8.13.0",
+    "reflect-metadata": "^0.2.2",
+    "typeorm": "^0.3.20"
   }
 }
