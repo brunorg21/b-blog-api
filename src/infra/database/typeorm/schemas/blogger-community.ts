@@ -9,18 +9,25 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { BloggerEntity } from "./blogger";
-import { CommentEntity } from "./comment";
+import { CommunityBloggerEntity } from "./community-blogger";
 
 @Entity()
-export class PostEntity {
+export class BloggerCommunityEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column()
-  title: string;
+  @Column({
+    length: 50,
+  })
+  name: string;
+
+  @Column({
+    unique: true,
+  })
+  slug: string;
 
   @Column()
-  content: string;
+  description: string;
 
   @Column({
     type: "uuid",
@@ -29,9 +36,8 @@ export class PostEntity {
 
   @Column({
     nullable: true,
-    type: "uuid",
   })
-  bloggerCommunityId: string;
+  avatarUrl: string;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -41,10 +47,13 @@ export class PostEntity {
   })
   updatedAt: Date;
 
-  @ManyToOne(() => BloggerEntity, (blogger) => blogger.posts)
+  @ManyToOne(() => BloggerEntity, (blogger) => blogger.bloggerCommunities)
   @JoinColumn({ name: "authorId" })
   author: BloggerEntity;
 
-  @OneToMany(() => CommentEntity, (comment) => comment.post)
-  comments: CommentEntity[];
+  @OneToMany(
+    () => CommunityBloggerEntity,
+    (communityBlogger) => communityBlogger.bloggerCommunity
+  )
+  communityBloggers: CommunityBloggerEntity[];
 }

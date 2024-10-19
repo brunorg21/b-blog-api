@@ -5,9 +5,13 @@ export class PostTopicsEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column()
+  @Column({
+    type: "uuid",
+  })
   postId: string;
 
-  @Column()
+  @Column({
+    type: "uuid",
+  })
   topicId: string;
 }

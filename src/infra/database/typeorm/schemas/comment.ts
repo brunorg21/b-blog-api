@@ -2,9 +2,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { PostEntity } from "./post";
+import { BloggerEntity } from "./blogger";
 
 @Entity()
 export class CommentEntity {
@@ -14,10 +18,14 @@ export class CommentEntity {
   @Column()
   content: string;
 
-  @Column()
+  @Column({
+    type: "uuid",
+  })
   authorId: string;
 
-  @Column()
+  @Column({
+    type: "uuid",
+  })
   postId: string;
 
   @CreateDateColumn()
@@ -27,4 +35,16 @@ export class CommentEntity {
     nullable: true,
   })
   updatedAt: Date;
+
+  @ManyToOne(() => PostEntity, (post) => post.comments)
+  @JoinColumn({
+    name: "postId",
+  })
+  post: PostEntity;
+
+  @ManyToOne(() => BloggerEntity, (blogger) => blogger.comments)
+  @JoinColumn({
+    name: "authorId",
+  })
+  author: BloggerEntity;
 }

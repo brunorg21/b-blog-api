@@ -2,9 +2,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { PostEntity } from "./post";
+import { BloggerCommunityEntity } from "./blogger-community";
+import { CommentEntity } from "./comment";
+import { CommunityBloggerEntity } from "./community-blogger";
 
 @Entity()
 export class BloggerEntity {
@@ -42,4 +47,22 @@ export class BloggerEntity {
     nullable: true,
   })
   updatedAt: Date;
+
+  @OneToMany(() => PostEntity, (post) => post.author)
+  posts: PostEntity[];
+
+  @OneToMany(
+    () => BloggerCommunityEntity,
+    (bloggerCommunity) => bloggerCommunity.author
+  )
+  bloggerCommunities: BloggerCommunityEntity[];
+
+  @OneToMany(() => CommentEntity, (comment) => comment.author)
+  comments: CommentEntity[];
+
+  @OneToMany(
+    () => CommunityBloggerEntity,
+    (communityBlogger) => communityBlogger.blogger
+  )
+  communityBloggers: CommunityBloggerEntity[];
 }

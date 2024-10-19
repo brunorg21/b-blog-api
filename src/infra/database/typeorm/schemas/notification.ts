@@ -13,10 +13,14 @@ export class NotificationEntity {
   @Column()
   message: string;
 
-  @Column()
+  @Column({
+    type: "uuid",
+  })
   senderId: string;
 
-  @Column()
+  @Column({
+    type: "uuid",
+  })
   recipientId: string;
 
   @CreateDateColumn()
