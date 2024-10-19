@@ -1,35 +1,23 @@
 import { ResourceNotFoundError } from "../@errors/resource-not-found-error";
-import { BloggerRepository } from "../../repositories/blogger-repository";
-import { NotAllowedError } from "../@errors/not-allowed-error";
-import { PostLikeRepository } from "../../repositories/post-like-repository";
+
+import { PostRepository } from "../../repositories/post-repostitory";
 
 interface RemovePostLikeUseCaseRequest {
-  postLikeId: string;
-  bloggerId: string;
+  postId: string;
 }
 
 export class RemovePostLikeUseCase {
-  constructor(
-    private readonly postLikeRepository: PostLikeRepository,
-    private readonly bloggerRepository: BloggerRepository
-  ) {}
+  constructor(private readonly postRepository: PostRepository) {}
 
-  async execute({
-    bloggerId,
-    postLikeId,
-  }: RemovePostLikeUseCaseRequest): Promise<void> {
-    const postLike = await this.postLikeRepository.getById(postLikeId);
+  async execute({ postId }: RemovePostLikeUseCaseRequest): Promise<void> {
+    const post = await this.postRepository.getById(postId);
 
-    if (!postLike) {
+    if (!post) {
       throw new ResourceNotFoundError();
     }
 
-    const blogger = await this.bloggerRepository.getById(bloggerId);
+    post.likeCount -= 1;
 
-    if (blogger?.role !== "ADMIN" && postLike.authorId !== bloggerId) {
-      throw new NotAllowedError();
-    }
-
-    await this.postLikeRepository.delete(postLike);
+    await this.postRepository.update(post);
   }
 }

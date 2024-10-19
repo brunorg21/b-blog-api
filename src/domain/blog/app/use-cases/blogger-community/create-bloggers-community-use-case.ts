@@ -1,5 +1,7 @@
 import { BloggersCommunity } from "@/domain/blog/enterprise/entities/bloggers-community";
 import { BloggersCommunityRepository } from "../../repositories/bloggers-community-repository";
+import { CommunityBloggerRepository } from "../../repositories/community-blogger-repository";
+import { CommunityBlogger } from "@/domain/blog/enterprise/entities/community-blogger";
 
 interface CreateBloggersCommunityUseCaseRequest {
   authorId: string;

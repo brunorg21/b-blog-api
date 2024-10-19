@@ -1,38 +1,23 @@
-import { PostCommentLike } from "@/domain/blog/enterprise/entities/post-comment-like";
-import { PostCommentLikeRepository } from "../../repositories/post-comment-like-repository";
 import { ResourceNotFoundError } from "../@errors/resource-not-found-error";
-import { BloggerRepository } from "../../repositories/blogger-repository";
-import { NotAllowedError } from "../@errors/not-allowed-error";
 
-interface RemovePostCommentLikeUseCaseRequest {
-  postCommentId: string;
-  bloggerId: string;
+import { PostCommentRepository } from "../../repositories/post-comment-repository";
+
+interface RemoveCommentLikeUseCaseRequest {
+  commentId: string;
 }
 
-export class RemovePostCommentLikeUseCase {
-  constructor(
-    private readonly postCommentLikeRepository: PostCommentLikeRepository,
-    private readonly bloggerRepository: BloggerRepository
-  ) {}
+export class RemoveCommentLikeUseCase {
+  constructor(private readonly postCommentRepository: PostCommentRepository) {}
 
-  async execute({
-    bloggerId,
-    postCommentId,
-  }: RemovePostCommentLikeUseCaseRequest): Promise<void> {
-    const postCommentLike = await this.postCommentLikeRepository.getById(
-      postCommentId
-    );
+  async execute({ commentId }: RemoveCommentLikeUseCaseRequest): Promise<void> {
+    const post = await this.postCommentRepository.getById(commentId);
 
-    if (!postCommentLike) {
+    if (!post) {
       throw new ResourceNotFoundError();
     }
 
-    const blogger = await this.bloggerRepository.getById(bloggerId);
+    post.likeCount -= 1;
 
-    if (blogger?.role !== "ADMIN" && postCommentLike.authorId !== bloggerId) {
-      throw new NotAllowedError();
-    }
-
-    await this.postCommentLikeRepository.delete(postCommentLike);
+    await this.postCommentRepository.update(post);
   }
 }

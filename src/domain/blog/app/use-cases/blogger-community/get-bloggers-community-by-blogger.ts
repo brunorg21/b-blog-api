@@ -1,6 +1,7 @@
 import { BloggersCommunity } from "@/domain/blog/enterprise/entities/bloggers-community";
 import { BloggersCommunityRepository } from "../../repositories/bloggers-community-repository";
 import { ResourceNotFoundError } from "../@errors/resource-not-found-error";
+import { CommunityBloggerRepository } from "../../repositories/community-blogger-repository";
 
 interface GetBloggersCommunityByBloggerUseCaseRequest {
   bloggerId: string;
@@ -12,14 +13,24 @@ interface GetBloggersCommunityByBloggerUseCaseResponse {
 
 export class GetBloggersCommunityByBloggerUseCase {
   constructor(
-    private readonly bloggersCommunityRepository: BloggersCommunityRepository
+    private readonly communityBloggerRepository: CommunityBloggerRepository,
+    private readonly bloggerCommunityRepository: BloggersCommunityRepository
   ) {}
+
   async execute({
     bloggerId,
   }: GetBloggersCommunityByBloggerUseCaseRequest): Promise<GetBloggersCommunityByBloggerUseCaseResponse> {
-    const bloggersCommunities =
-      await this.bloggersCommunityRepository.getAllByBloggerId(bloggerId);
+    const communityBloggers =
+      await this.communityBloggerRepository.getAllByBloggerId(bloggerId);
 
-    return { bloggersCommunities };
+    const bloggersCommunities = await Promise.all(
+      communityBloggers.map((communityBlogger) =>
+        this.bloggerCommunityRepository.getAllById(
+          communityBlogger.bloggerCommunityId
+        )
+      )
+    );
+
+    return { bloggersCommunities: bloggersCommunities[0] };
   }
 }
