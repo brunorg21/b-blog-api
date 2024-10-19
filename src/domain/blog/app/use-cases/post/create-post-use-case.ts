@@ -7,7 +7,7 @@ interface CreatePostUseCaseRequest {
   title: string;
   content: string;
   authorId: string;
-  bloggersCommunityId: string | null;
+  bloggerCommunityId: string | null;
   topics: string[];
 }
 
@@ -25,9 +25,10 @@ export class CreatePostUseCase {
   ): Promise<CreatePostUseCaseResponse> {
     const newPost = Post.create({
       authorId: post.authorId,
-      bloggersCommunityId: post.bloggersCommunityId,
+      bloggerCommunityId: post.bloggerCommunityId,
       content: post.content,
       title: post.title,
+      likeCount: 0,
     });
 
     await this.postRepository.save(newPost);

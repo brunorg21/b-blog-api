@@ -22,6 +22,7 @@ export class CreatePostCommentUseCase {
       authorId,
       content,
       postId,
+      likeCount: 0,
     });
 
     await this.postcommentRepository.save(newPostComment);

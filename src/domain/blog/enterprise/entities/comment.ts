@@ -5,6 +5,7 @@ export interface CommentProps {
   content: string;
   createdAt: Date;
   updatedAt: Date | null;
+  likeCount: number;
 }
 
 export class Comment<Props extends CommentProps> extends Entity<Props> {
@@ -19,6 +20,10 @@ export class Comment<Props extends CommentProps> extends Entity<Props> {
     return this.props.createdAt;
   }
 
+  get likeCount() {
+    return this.props.likeCount;
+  }
+
   get updatedAt() {
     return this.props.updatedAt;
   }
@@ -26,6 +31,10 @@ export class Comment<Props extends CommentProps> extends Entity<Props> {
   set content(content: string) {
     this.props.content = content;
     this.touch();
+  }
+
+  set likeCount(likeCount: number) {
+    this.props.likeCount = likeCount;
   }
 
   private touch() {

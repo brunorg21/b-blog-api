@@ -4,9 +4,10 @@ interface PostProps {
   title: string;
   content: string;
   authorId: string;
-  bloggersCommunityId: string | null;
+  bloggerCommunityId: string | null;
   createdAt?: Date;
   updatedAt: Date | null;
+  likeCount: number;
 }
 
 export class Post {
@@ -28,8 +29,8 @@ export class Post {
   get authorId() {
     return this.props.authorId;
   }
-  get bloggersCommunityId() {
-    return this.props.bloggersCommunityId;
+  get bloggerCommunityId() {
+    return this.props.bloggerCommunityId;
   }
 
   get createdAt() {
@@ -38,6 +39,9 @@ export class Post {
 
   get updatedAt() {
     return this.props.updatedAt;
+  }
+  get likeCount() {
+    return this.props.likeCount;
   }
 
   set title(title: string) {
@@ -51,9 +55,12 @@ export class Post {
   set authorId(authorId: string) {
     this.props.authorId = authorId;
   }
+  set likeCount(likeCount: number) {
+    this.props.likeCount = likeCount;
+  }
 
-  set bloggersCommunityId(bloggersCommunityId: string | null) {
-    this.props.bloggersCommunityId = bloggersCommunityId;
+  set bloggersCommunityId(bloggerCommunityId: string | null) {
+    this.props.bloggerCommunityId = bloggerCommunityId;
   }
 
   private update() {
@@ -67,11 +74,12 @@ export class Post {
     const post = new Post(
       {
         authorId: props.authorId,
-        bloggersCommunityId: props.bloggersCommunityId,
+        bloggerCommunityId: props.bloggerCommunityId,
         content: props.content,
         createdAt: new Date(),
         title: props.title,
         updatedAt: null,
+        likeCount: props.likeCount,
       },
       id
     );
