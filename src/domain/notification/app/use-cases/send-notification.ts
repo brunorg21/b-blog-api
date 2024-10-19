@@ -7,6 +7,9 @@ interface SendNotificationRequest {
   senderId: string;
   readAt: Date | null;
 }
+interface SendNotificationResponse {
+  notification: Notification;
+}
 
 export class SendNotificationUseCase {
   constructor(
@@ -18,7 +21,7 @@ export class SendNotificationUseCase {
     recipientId,
     senderId,
     readAt,
-  }: SendNotificationRequest): Promise<void> {
+  }: SendNotificationRequest): Promise<SendNotificationResponse> {
     const notification = Notification.create({
       message,
       recipientId,
@@ -26,5 +29,7 @@ export class SendNotificationUseCase {
       senderId,
     });
     await this.notificationRepository.create(notification);
+
+    return { notification };
   }
 }
