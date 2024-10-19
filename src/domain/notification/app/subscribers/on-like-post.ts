@@ -1,7 +1,6 @@
 import { PostRepository } from "@/domain/blog/app/repositories/post-repostitory";
 import { SendNotificationUseCase } from "../use-cases/send-notification";
 import { BloggerRepository } from "@/domain/blog/app/repositories/blogger-repository";
-import { PostLikeRepository } from "@/domain/blog/app/repositories/post-like-repository";
 
 interface OnLikePostSubscriberRequest {
   postId: string;
@@ -10,13 +9,13 @@ interface OnLikePostSubscriberRequest {
 
 export class OnLikePostSubscriber {
   constructor(
-    private readonly postLikeRepository: PostLikeRepository,
+    private readonly postRepository: PostRepository,
     private readonly bloggerRepository: BloggerRepository,
     private readonly sendNotification: SendNotificationUseCase
   ) {}
 
   async execute({ postId, likeAuthorId }: OnLikePostSubscriberRequest) {
-    const post = await this.postLikeRepository.getByPostId(postId);
+    const post = await this.postRepository.getById(postId);
 
     const blogger = await this.bloggerRepository.getById(postId);
 

@@ -1,7 +1,7 @@
-import { PostCommentLikeRepository } from "@/domain/blog/app/repositories/post-comment-like-repository";
 import { SendNotificationUseCase } from "../use-cases/send-notification";
 import { BloggerRepository } from "@/domain/blog/app/repositories/blogger-repository";
 import { ResourceNotFoundError } from "@/domain/blog/app/use-cases/@errors/resource-not-found-error";
+import { PostCommentRepository } from "@/domain/blog/app/repositories/post-comment-repository";
 
 interface OnLikeCommentSubscriberRequest {
   commentId: string;
@@ -10,7 +10,7 @@ interface OnLikeCommentSubscriberRequest {
 
 export class OnLikeCommentSubscriber {
   constructor(
-    private readonly postCommentLikeRepository: PostCommentLikeRepository,
+    private readonly postCommentRepository: PostCommentRepository,
     private readonly bloggerRepository: BloggerRepository,
     private readonly sendNotification: SendNotificationUseCase
   ) {}
@@ -19,9 +19,7 @@ export class OnLikeCommentSubscriber {
     commentId,
     likeCommentAuthorId,
   }: OnLikeCommentSubscriberRequest) {
-    const postCommentLike = await this.postCommentLikeRepository.getById(
-      commentId
-    );
+    const postComment = await this.postCommentRepository.getById(commentId);
 
     const blogger = await this.bloggerRepository.getById(likeCommentAuthorId);
 
@@ -29,10 +27,10 @@ export class OnLikeCommentSubscriber {
       throw new ResourceNotFoundError();
     }
 
-    if (postCommentLike) {
+    if (postComment) {
       await this.sendNotification.execute({
         message: `${blogger?.name} liked your comment.`,
-        recipientId: postCommentLike.authorId,
+        recipientId: postComment.authorId,
         senderId: likeCommentAuthorId,
         readAt: null,
       });
