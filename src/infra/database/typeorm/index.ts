@@ -1,5 +1,11 @@
 import { DataSource } from "typeorm";
+
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 import "reflect-metadata";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export const appDataSource = new DataSource({
   type: "postgres",
@@ -10,6 +16,6 @@ export const appDataSource = new DataSource({
   database: "blog-api-db",
   synchronize: true,
   logging: true,
-  entities: ["./schemas/*.ts"],
-  migrations: ["./migrations/*.ts"],
+  entities: [`${__dirname}/**/schemas/*.{ts,js}`],
+  migrations: [`${__dirname}/**/migrations/*.{ts,js}`],
 });
