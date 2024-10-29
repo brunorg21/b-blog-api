@@ -1,9 +1,8 @@
 import { Blogger } from "@/domain/blog/enterprise/entities/blogger";
 import { BloggerRepository } from "../../repositories/blogger-repository";
-import { UserAlreadyExistsError } from "../@errors/user-already-exists-error";
 
-import { compare, hash } from "bcrypt";
 import { InvalidCredentialsError } from "../@errors/invalid-credentials";
+import { HashCompare } from "@/domain/cryptography/hash-compare";
 
 interface AuthenticateBloggerUseCaseRequest {
   email: string;
@@ -15,7 +14,10 @@ interface AuthenticateBloggerUseCaseResponse {
 }
 
 export class AuthenticateBloggerUseCase {
-  constructor(private readonly bloggerRepository: BloggerRepository) {}
+  constructor(
+    private readonly bloggerRepository: BloggerRepository,
+    private readonly hasher: HashCompare
+  ) {}
   async execute({
     email,
     password,
@@ -26,7 +28,10 @@ export class AuthenticateBloggerUseCase {
       throw new InvalidCredentialsError();
     }
 
-    const passwordHash = await compare(password, blogger.password);
+    const passwordHash = await this.hasher.compare({
+      hash: blogger.password,
+      value: password,
+    });
 
     if (!passwordHash) {
       throw new InvalidCredentialsError();

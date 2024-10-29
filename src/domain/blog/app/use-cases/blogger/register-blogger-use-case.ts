@@ -3,6 +3,7 @@ import { BloggerRepository } from "../../repositories/blogger-repository";
 import { UserAlreadyExistsError } from "../@errors/user-already-exists-error";
 
 import { hash } from "bcrypt";
+import { HashGenerator } from "@/domain/cryptography/hash-generator";
 
 interface RegisterBloggerUseCaseRequest {
   bloggersCommunities: string[] | null;
@@ -18,7 +19,10 @@ interface RegisterBloggerUseCaseResponse {
 }
 
 export class RegisterBloggerUseCase {
-  constructor(private readonly bloggerRepository: BloggerRepository) {}
+  constructor(
+    private readonly bloggerRepository: BloggerRepository,
+    private readonly hasher: HashGenerator
+  ) {}
   async execute(
     blogger: RegisterBloggerUseCaseRequest
   ): Promise<RegisterBloggerUseCaseResponse> {
@@ -30,7 +34,10 @@ export class RegisterBloggerUseCase {
       throw new UserAlreadyExistsError(blogger.email);
     }
 
-    blogger.password = await hash(blogger.password, 6);
+    blogger.password = await this.hasher.encrypt({
+      salt: 8,
+      value: blogger.password,
+    });
 
     const newBlogger = Blogger.create(blogger);
 
