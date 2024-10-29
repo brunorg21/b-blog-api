@@ -1,18 +1,27 @@
 version: "3.8"
 
 services:
-  postgres:
-    container_name: blog-api-pg
-    image: postgres
+  blog-api:
+    container_name: api-blog
+    build: .
+    command: npm run dev
     ports:
-      - 5432:5432
-    environment:
-      POSTGRES_USER: docker
-      POSTGRES_PASSWORD: docker
-      POSTGRES_DB: blog-api-db
-      PGDATA: /data/postgres
+      - 3000:3000
     volumes:
-      - ./data/pg:/data/postgres
+      - .:/usr/app
+      - /usr/app/node_modules
+  # postgres:
+  #   container_name: blog-api-pg
+  #   image: postgres
+  #   ports:
+  #     - 5432:5432
+  #   environment:
+  #     POSTGRES_USER: docker
+  #     POSTGRES_PASSWORD: docker
+  #     POSTGRES_DB: blog-api-db
+  #     PGDATA: /data/postgres
+  #   volumes:
+  #     - ./data/pg:/data/postgres
 
   # cache:
   #   container_name: blog-api-cache
