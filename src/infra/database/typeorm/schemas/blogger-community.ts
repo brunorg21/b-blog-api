@@ -11,22 +11,25 @@ import {
 import { BloggerEntity } from "./blogger";
 import { CommunityBloggerEntity } from "./community-blogger";
 
-@Entity()
+@Entity("blogger_communities")
 export class BloggerCommunityEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column({
-    length: 50,
+    type: "text",
   })
   name: string;
 
   @Column({
     unique: true,
+    type: "text",
   })
   slug: string;
 
-  @Column()
+  @Column({
+    type: "text",
+  })
   description: string;
 
   @Column({
@@ -36,6 +39,7 @@ export class BloggerCommunityEntity {
 
   @Column({
     nullable: true,
+    type: "text",
   })
   avatarUrl: string;
 

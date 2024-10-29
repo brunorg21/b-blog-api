@@ -2,15 +2,20 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { BloggerEntity } from "./blogger";
 
-@Entity()
+@Entity("notifications")
 export class NotificationEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column()
+  @Column({
+    type: "text",
+  })
   message: string;
 
   @Column({
@@ -28,6 +33,15 @@ export class NotificationEntity {
 
   @Column({
     nullable: true,
+    type: "date",
   })
   readAt: Date;
+
+  @ManyToOne(() => BloggerEntity, (blogger) => blogger.posts)
+  @JoinColumn({ name: "senderId" })
+  sender: BloggerEntity;
+
+  @ManyToOne(() => BloggerEntity, (blogger) => blogger.posts)
+  @JoinColumn({ name: "recipientId" })
+  recipient: BloggerEntity;
 }

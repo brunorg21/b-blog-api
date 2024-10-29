@@ -10,7 +10,7 @@ import {
 import { BloggerCommunityEntity } from "./blogger-community";
 import { BloggerEntity } from "./blogger";
 
-@Entity()
+@Entity("community_bloggers")
 export class CommunityBloggerEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;

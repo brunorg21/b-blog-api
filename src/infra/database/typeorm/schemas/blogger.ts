@@ -10,33 +10,39 @@ import { PostEntity } from "./post";
 import { BloggerCommunityEntity } from "./blogger-community";
 import { CommentEntity } from "./comment";
 import { CommunityBloggerEntity } from "./community-blogger";
+import { NotificationEntity } from "./notification";
 
-@Entity()
+@Entity("blogger")
 export class BloggerEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column({
-    length: 50,
+    type: "text",
   })
   name: string;
 
   @Column({
     unique: true,
+    type: "text",
   })
   email: string;
 
-  @Column()
+  @Column({
+    type: "text",
+  })
   password: string;
 
   @Column({
     enum: ["ADMIN", "COMMON"],
     default: "COMMON",
+    type: "text",
   })
   role: string;
 
   @Column({
     nullable: true,
+    type: "text",
   })
   avatarUrl: string;
 
@@ -65,4 +71,10 @@ export class BloggerEntity {
     (communityBlogger) => communityBlogger.blogger
   )
   communityBloggers: CommunityBloggerEntity[];
+
+  @OneToMany(() => NotificationEntity, (notification) => notification.sender)
+  notificationsSent: CommunityBloggerEntity[];
+
+  @OneToMany(() => NotificationEntity, (notification) => notification.recipient)
+  notificationsReceived: CommunityBloggerEntity[];
 }

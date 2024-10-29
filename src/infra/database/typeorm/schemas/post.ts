@@ -10,17 +10,29 @@ import {
 } from "typeorm";
 import { BloggerEntity } from "./blogger";
 import { CommentEntity } from "./comment";
+import { PostTopicsEntity } from "./post-topics";
 
-@Entity()
+@Entity("posts")
 export class PostEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column()
+  @Column({
+    type: "text",
+  })
   title: string;
 
-  @Column()
+  @Column({
+    type: "varchar",
+    length: 500,
+  })
   content: string;
+
+  @Column({
+    default: 0,
+    type: "int",
+  })
+  likeCount: number;
 
   @Column({
     type: "uuid",
@@ -47,4 +59,7 @@ export class PostEntity {
 
   @OneToMany(() => CommentEntity, (comment) => comment.post)
   comments: CommentEntity[];
+
+  @OneToMany(() => PostTopicsEntity, (postTopic) => postTopic.post)
+  postTopics: PostTopicsEntity[];
 }

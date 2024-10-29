@@ -1,6 +1,14 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { TopicEntity } from "./topic";
+import { PostEntity } from "./post";
 
-@Entity()
+@Entity("post_topics")
 export class PostTopicsEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
@@ -14,4 +22,16 @@ export class PostTopicsEntity {
     type: "uuid",
   })
   topicId: string;
+
+  @ManyToOne(() => TopicEntity, (topic) => topic.postTopics, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "topicId" })
+  topic: TopicEntity;
+
+  @ManyToOne(() => PostEntity, (post) => post.postTopics, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "postId" })
+  post: PostEntity;
 }

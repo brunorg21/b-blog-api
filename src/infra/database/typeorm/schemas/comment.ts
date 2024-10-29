@@ -10,18 +10,26 @@ import {
 import { PostEntity } from "./post";
 import { BloggerEntity } from "./blogger";
 
-@Entity()
+@Entity("comments")
 export class CommentEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column()
+  @Column({
+    type: "text",
+  })
   content: string;
 
   @Column({
     type: "uuid",
   })
   authorId: string;
+
+  @Column({
+    default: 0,
+    type: "int",
+  })
+  likeCount: number;
 
   @Column({
     type: "uuid",
