@@ -44,7 +44,7 @@ export class BloggerEntity {
     nullable: true,
     type: "text",
   })
-  avatarUrl: string;
+  avatarUrl: string | null;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -52,29 +52,29 @@ export class BloggerEntity {
   @UpdateDateColumn({
     nullable: true,
   })
-  updatedAt: Date;
+  updatedAt: Date | null;
 
   @OneToMany(() => PostEntity, (post) => post.author)
-  posts: PostEntity[];
+  posts?: PostEntity[];
 
   @OneToMany(
     () => BloggerCommunityEntity,
     (bloggerCommunity) => bloggerCommunity.author
   )
-  bloggerCommunities: BloggerCommunityEntity[];
+  bloggerCommunities?: BloggerCommunityEntity[];
 
   @OneToMany(() => CommentEntity, (comment) => comment.author)
-  comments: CommentEntity[];
+  comments?: CommentEntity[];
 
   @OneToMany(
     () => CommunityBloggerEntity,
     (communityBlogger) => communityBlogger.blogger
   )
-  communityBloggers: CommunityBloggerEntity[];
+  communityBloggers?: CommunityBloggerEntity[];
 
   @OneToMany(() => NotificationEntity, (notification) => notification.sender)
-  notificationsSent: CommunityBloggerEntity[];
+  notificationsSent?: CommunityBloggerEntity[];
 
   @OneToMany(() => NotificationEntity, (notification) => notification.recipient)
-  notificationsReceived: CommunityBloggerEntity[];
+  notificationsReceived?: CommunityBloggerEntity[];
 }

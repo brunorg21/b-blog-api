@@ -15,24 +15,16 @@ export class TopicEntity {
   id: string;
 
   @Column({
-     type: "text"
+    type: "text",
   })
   name: string;
 
   @Column({
     unique: true,
-     type: "text"
+    type: "text",
   })
   slug: string;
 
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn({
-    nullable: true,
-  })
-  updatedAt: Date;
-
   @OneToMany(() => PostTopicsEntity, (postTopic) => postTopic.topic)
-  postTopics: PostTopicsEntity[];
+  postTopics?: PostTopicsEntity[];
 }

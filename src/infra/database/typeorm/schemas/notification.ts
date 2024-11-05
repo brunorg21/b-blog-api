@@ -35,13 +35,13 @@ export class NotificationEntity {
     nullable: true,
     type: "date",
   })
-  readAt: Date;
+  readAt: Date | null;
 
   @ManyToOne(() => BloggerEntity, (blogger) => blogger.posts)
   @JoinColumn({ name: "senderId" })
-  sender: BloggerEntity;
+  sender?: BloggerEntity;
 
   @ManyToOne(() => BloggerEntity, (blogger) => blogger.posts)
   @JoinColumn({ name: "recipientId" })
-  recipient: BloggerEntity;
+  recipient?: BloggerEntity;
 }

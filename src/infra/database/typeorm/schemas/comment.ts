@@ -42,17 +42,17 @@ export class CommentEntity {
   @UpdateDateColumn({
     nullable: true,
   })
-  updatedAt: Date;
+  updatedAt: Date | null;
 
   @ManyToOne(() => PostEntity, (post) => post.comments)
   @JoinColumn({
     name: "postId",
   })
-  post: PostEntity;
+  post?: PostEntity;
 
   @ManyToOne(() => BloggerEntity, (blogger) => blogger.comments)
   @JoinColumn({
     name: "authorId",
   })
-  author: BloggerEntity;
+  author?: BloggerEntity;
 }

@@ -25,9 +25,6 @@ export class CommunityBloggerEntity {
   })
   bloggerId: string;
 
-  @CreateDateColumn()
-  createdAt: Date;
-
   @ManyToOne(
     () => BloggerCommunityEntity,
     (community) => community.communityBloggers,
@@ -36,11 +33,11 @@ export class CommunityBloggerEntity {
     }
   )
   @JoinColumn({ name: "bloggerCommunityId" })
-  bloggerCommunity: BloggerCommunityEntity;
+  bloggerCommunity?: BloggerCommunityEntity;
 
   @ManyToOne(() => BloggerEntity, (blogger) => blogger.communityBloggers, {
     onDelete: "CASCADE",
   })
   @JoinColumn({ name: "bloggerId" })
-  blogger: BloggerEntity;
+  blogger?: BloggerEntity;
 }

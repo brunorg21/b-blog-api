@@ -27,11 +27,11 @@ export class PostTopicsEntity {
     onDelete: "CASCADE",
   })
   @JoinColumn({ name: "topicId" })
-  topic: TopicEntity;
+  topic?: TopicEntity;
 
   @ManyToOne(() => PostEntity, (post) => post.postTopics, {
     onDelete: "CASCADE",
   })
   @JoinColumn({ name: "postId" })
-  post: PostEntity;
+  post?: PostEntity;
 }

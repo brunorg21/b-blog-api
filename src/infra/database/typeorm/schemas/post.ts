@@ -43,23 +43,23 @@ export class PostEntity {
     nullable: true,
     type: "uuid",
   })
-  bloggerCommunityId: string;
+  bloggerCommunityId: string | null;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt?: Date;
 
   @UpdateDateColumn({
     nullable: true,
   })
-  updatedAt: Date;
+  updatedAt: Date | null;
 
   @ManyToOne(() => BloggerEntity, (blogger) => blogger.posts)
   @JoinColumn({ name: "authorId" })
-  author: BloggerEntity;
+  author?: BloggerEntity;
 
   @OneToMany(() => CommentEntity, (comment) => comment.post)
-  comments: CommentEntity[];
+  comments?: CommentEntity[];
 
   @OneToMany(() => PostTopicsEntity, (postTopic) => postTopic.post)
-  postTopics: PostTopicsEntity[];
+  postTopics?: PostTopicsEntity[];
 }
