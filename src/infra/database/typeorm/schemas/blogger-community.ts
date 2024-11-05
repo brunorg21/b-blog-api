@@ -41,23 +41,23 @@ export class BloggerCommunityEntity {
     nullable: true,
     type: "text",
   })
-  avatarUrl: string;
+  avatarUrl: string | null;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt?: Date;
 
   @UpdateDateColumn({
     nullable: true,
   })
-  updatedAt: Date;
+  updatedAt: Date | null;
 
   @ManyToOne(() => BloggerEntity, (blogger) => blogger.bloggerCommunities)
   @JoinColumn({ name: "authorId" })
-  author: BloggerEntity;
+  author?: BloggerEntity;
 
   @OneToMany(
     () => CommunityBloggerEntity,
     (communityBlogger) => communityBlogger.bloggerCommunity
   )
-  communityBloggers: CommunityBloggerEntity[];
+  communityBloggers?: CommunityBloggerEntity[];
 }

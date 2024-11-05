@@ -1,4 +1,3 @@
-import { generateSlug } from "@/core/generate-slug";
 import { randomUUID } from "node:crypto";
 
 interface CommunityBloggerProps {
