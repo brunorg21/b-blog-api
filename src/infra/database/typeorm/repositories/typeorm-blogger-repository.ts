@@ -2,15 +2,19 @@ import { BloggerRepository } from "@/domain/blog/app/repositories/blogger-reposi
 import { Blogger } from "@/domain/blog/enterprise/entities/blogger";
 import { appDataSource } from "..";
 import { Repository } from "typeorm";
+import { BloggerEntity } from "../schemas/blogger";
+import { ToTypeormBloggerMapper } from "../mappers/toTypeormBloggerMapper";
 
 export class TypeormBloggerRepository implements BloggerRepository {
-  private typeormBloggerRepository: Repository<Blogger>;
+  private typeormBloggerRepository: Repository<BloggerEntity>;
 
   constructor() {
-    this.typeormBloggerRepository = appDataSource.getRepository(Blogger);
+    this.typeormBloggerRepository = appDataSource.getRepository(BloggerEntity);
   }
   async save(blogger: Blogger): Promise<void> {
-    await this.typeormBloggerRepository.create(blogger);
+    const typeormBlogger = ToTypeormBloggerMapper.toBloggerEntity(blogger);
+
+    this.typeormBloggerRepository.create(typeormBlogger);
   }
   async getById(id: string): Promise<Blogger | null> {
     const blogger = await this.typeormBloggerRepository.findOneBy({ id });
@@ -19,12 +23,12 @@ export class TypeormBloggerRepository implements BloggerRepository {
       return null;
     }
 
-    return blogger;
+    return ToTypeormBloggerMapper.toDomain(blogger);
   }
   async getAll(): Promise<Blogger[]> {
     const bloggers = await this.typeormBloggerRepository.find();
 
-    return bloggers;
+    return bloggers.map((blogger) => ToTypeormBloggerMapper.toDomain(blogger));
   }
   async update(blogger: Blogger): Promise<void> {
     await this.typeormBloggerRepository.save(blogger);
@@ -36,7 +40,7 @@ export class TypeormBloggerRepository implements BloggerRepository {
       return null;
     }
 
-    return blogger;
+    return ToTypeormBloggerMapper.toDomain(blogger);
   }
   async delete(blogger: Blogger): Promise<void> {
     await this.typeormBloggerRepository.remove(blogger);
