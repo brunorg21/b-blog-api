@@ -15,7 +15,7 @@ import { NotificationEntity } from "./notification";
 @Entity("blogger")
 export class BloggerEntity {
   @PrimaryGeneratedColumn("uuid")
-  id: string;
+  id?: string;
 
   @Column({
     type: "text",
@@ -38,7 +38,7 @@ export class BloggerEntity {
     default: "COMMON",
     type: "text",
   })
-  role: string;
+  role?: string;
 
   @Column({
     nullable: true,
@@ -47,7 +47,7 @@ export class BloggerEntity {
   avatarUrl: string | null;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt?: Date;
 
   @UpdateDateColumn({
     nullable: true,
