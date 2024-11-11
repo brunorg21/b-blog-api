@@ -1,14 +1,12 @@
 import {
-  HashCompare,
-  HashCompareProps,
-} from "@/domain/cryptography/hash-compare";
-import {
-  HashGenerator,
   HashGeneratorProps,
-} from "@/domain/cryptography/hash-generator";
+  HashCompareProps,
+  Hasher,
+} from "@/domain/cryptography/hasher";
+
 import { compare, hash } from "bcrypt";
 
-export class BcryptHasher implements HashCompare, HashGenerator {
+export class BcryptHasher implements Hasher {
   async encrypt({ salt, value }: HashGeneratorProps): Promise<string> {
     const valueHashed = await hash(value, salt);
 
