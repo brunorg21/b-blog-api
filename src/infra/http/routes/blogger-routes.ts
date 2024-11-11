@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { BloggerController } from "../controllers/blogger-controller";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
-import { authenticateSchema, registerSchema } from "@/utils/zodSchemas";
+import { authenticateSchema, registerSchema } from "@/utils/blogger-schemas";
 import { TypeormBloggerRepository } from "@/infra/database/typeorm/repositories/typeorm-blogger-repository";
 import { BcryptHasher } from "@/infra/cryptography/bcrypt-hasher";
 import { z } from "zod";
