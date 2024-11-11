@@ -7,4 +7,5 @@ export interface BloggerRepository {
   update(blogger: Blogger): Promise<void>;
   findByEmail(email: string): Promise<Blogger | null>;
   delete(blogger: Blogger): Promise<void>;
+  findById(id: string): Promise<Blogger | null>;
 }
