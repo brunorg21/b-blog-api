@@ -15,7 +15,7 @@ export const appDataSource = new DataSource({
   password: "docker",
   database: "blog-api-db",
   synchronize: true,
-  logging: true,
+  logging: false,
   entities: [`${__dirname}/**/schemas/*.{ts,js}`],
   migrations: [`${__dirname}/**/migrations/*.{ts,js}`],
 });
