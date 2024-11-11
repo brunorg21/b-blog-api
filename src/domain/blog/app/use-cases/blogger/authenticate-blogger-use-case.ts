@@ -2,7 +2,7 @@ import { Blogger } from "@/domain/blog/enterprise/entities/blogger";
 import { BloggerRepository } from "../../repositories/blogger-repository";
 
 import { InvalidCredentialsError } from "../@errors/invalid-credentials";
-import { HashCompare } from "@/domain/cryptography/hash-compare";
+import { Hasher } from "@/domain/cryptography/hasher";
 
 interface AuthenticateBloggerUseCaseRequest {
   email: string;
@@ -16,7 +16,7 @@ interface AuthenticateBloggerUseCaseResponse {
 export class AuthenticateBloggerUseCase {
   constructor(
     private readonly bloggerRepository: BloggerRepository,
-    private readonly hasher: HashCompare
+    private readonly hasher: Hasher
   ) {}
   async execute({
     email,
