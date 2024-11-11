@@ -1,10 +1,64 @@
 import fastify from "fastify";
+import { appDataSource } from "./database/typeorm";
+import fastifyCors from "@fastify/cors";
+import fastifySwagger from "@fastify/swagger";
+import fastifySwaggerUI from "@fastify/swagger-ui";
+import {
+  jsonSchemaTransform,
+  serializerCompiler,
+  validatorCompiler,
+} from "fastify-type-provider-zod";
+import { bloggerRoutes } from "./http/routes/blogger-routes";
+import { ZodError } from "zod";
+import fastifyJwt from "@fastify/jwt";
+
+appDataSource
+  .initialize()
+  .then(() => console.log("Database has been initialized ༼ つ ◕_◕ ༽つ"))
+  .catch((err) => console.log("Error during Data Source initialization", err));
 
 const app = fastify();
+
+await app.register(fastifyCors, {
+  origin: "*",
+  allowedHeaders: ["Content-Type", "Authorization"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+});
+
+app.setValidatorCompiler(validatorCompiler);
+app.setSerializerCompiler(serializerCompiler);
+
+app.register(fastifySwagger, {
+  openapi: {
+    info: {
+      title: "blog-api",
+      description: "an api for blog",
+      version: "1.0.0",
+    },
+    servers: [],
+  },
+  transform: jsonSchemaTransform,
+});
+
+app.register(fastifySwaggerUI, {
+  routePrefix: "/docs",
+});
+
+app.register(fastifyJwt, {
+  secret: "secret",
+});
+
+app.register((server) => bloggerRoutes(server).listen());
+
+app.setErrorHandler((err, _, reply) => {
+  if (err instanceof ZodError) {
+    return reply.status(400).send({ error: err.message });
+  }
+});
 
 app
   .listen({
     port: 3000,
     host: "0.0.0.0",
   })
-  .then(() => console.log("Server running on port 3000"));
+  .then((e) => console.log(`Server running on ${e} (⌐■_■)`));
