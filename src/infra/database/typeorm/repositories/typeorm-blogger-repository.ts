@@ -11,10 +11,19 @@ export class TypeormBloggerRepository implements BloggerRepository {
   constructor() {
     this.typeormBloggerRepository = appDataSource.getRepository(BloggerEntity);
   }
+  async findById(id: string): Promise<Blogger | null> {
+    const blogger = await this.typeormBloggerRepository.findOneBy({ id });
+
+    if (!blogger) {
+      return null;
+    }
+
+    return ToTypeormBloggerMapper.toDomain(blogger);
+  }
   async save(blogger: Blogger): Promise<void> {
     const typeormBlogger = ToTypeormBloggerMapper.toBloggerEntity(blogger);
 
-    this.typeormBloggerRepository.create(typeormBlogger);
+    await this.typeormBloggerRepository.save(typeormBlogger);
   }
   async getById(id: string): Promise<Blogger | null> {
     const blogger = await this.typeormBloggerRepository.findOneBy({ id });

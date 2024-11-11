@@ -14,36 +14,36 @@ export class TypeormPostTopicsRepository implements PostTopicsRepository {
       appDataSource.getRepository(PostTopicsEntity);
   }
   async getAll(): Promise<PostTopic[]> {
-    const posttopicss = await this.typeormPostTopicsRepository.find();
+    const postTopics = await this.typeormPostTopicsRepository.find();
 
-    return posttopicss.map((posttopics) =>
-      ToTypeormPostTopicsMapper.toDomain(posttopics)
+    return postTopics.map((postTopic) =>
+      ToTypeormPostTopicsMapper.toDomain(postTopic)
     );
   }
 
-  async save(posttopics: PostTopic): Promise<void> {
-    const typeormPostTopics =
-      ToTypeormPostTopicsMapper.toPostTopicsEntity(posttopics);
+  async save(postTopic: PostTopic): Promise<void> {
+    const typeormPostTopic =
+      ToTypeormPostTopicsMapper.toPostTopicsEntity(postTopic);
 
-    this.typeormPostTopicsRepository.create(typeormPostTopics);
+    this.typeormPostTopicsRepository.create(typeormPostTopic);
   }
   async getById(id: string): Promise<PostTopic | null> {
-    const posttopics = await this.typeormPostTopicsRepository.findOneBy({
+    const postTopic = await this.typeormPostTopicsRepository.findOneBy({
       id,
     });
 
-    if (!posttopics) {
+    if (!postTopic) {
       return null;
     }
 
-    return ToTypeormPostTopicsMapper.toDomain(posttopics);
+    return ToTypeormPostTopicsMapper.toDomain(postTopic);
   }
 
-  async update(posttopics: PostTopic): Promise<void> {
-    await this.typeormPostTopicsRepository.save(posttopics);
+  async update(postTopic: PostTopic): Promise<void> {
+    await this.typeormPostTopicsRepository.save(postTopic);
   }
 
-  async delete(posttopics: PostTopic): Promise<void> {
-    await this.typeormPostTopicsRepository.remove(posttopics);
+  async delete(postTopic: PostTopic): Promise<void> {
+    await this.typeormPostTopicsRepository.remove(postTopic);
   }
 }
