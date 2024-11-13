@@ -29,6 +29,7 @@ export class CreatePostUseCase {
       content: post.content,
       title: post.title,
       likeCount: 0,
+      topics: post.topics,
     });
 
     await this.postRepository.save(newPost);

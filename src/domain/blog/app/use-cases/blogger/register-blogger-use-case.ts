@@ -1,9 +1,7 @@
 import { Blogger } from "@/domain/blog/enterprise/entities/blogger";
 import { BloggerRepository } from "../../repositories/blogger-repository";
 import { UserAlreadyExistsError } from "../@errors/user-already-exists-error";
-
-import { hash } from "bcrypt";
-import { HashGenerator } from "@/domain/cryptography/hash-generator";
+import { Hasher } from "@/domain/cryptography/hasher";
 
 interface RegisterBloggerUseCaseRequest {
   bloggersCommunities: string[] | null;
@@ -21,7 +19,7 @@ interface RegisterBloggerUseCaseResponse {
 export class RegisterBloggerUseCase {
   constructor(
     private readonly bloggerRepository: BloggerRepository,
-    private readonly hasher: HashGenerator
+    private readonly hasher: Hasher
   ) {}
   async execute(
     blogger: RegisterBloggerUseCaseRequest
