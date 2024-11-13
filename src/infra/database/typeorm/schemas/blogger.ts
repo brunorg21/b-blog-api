@@ -52,7 +52,7 @@ export class BloggerEntity {
   @UpdateDateColumn({
     nullable: true,
   })
-  updatedAt: Date | null;
+  updatedAt?: Date | null;
 
   @OneToMany(() => PostEntity, (post) => post.author)
   posts?: PostEntity[];

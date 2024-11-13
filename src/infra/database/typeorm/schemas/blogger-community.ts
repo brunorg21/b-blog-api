@@ -10,6 +10,7 @@ import {
 } from "typeorm";
 import { BloggerEntity } from "./blogger";
 import { CommunityBloggerEntity } from "./community-blogger";
+import { PostEntity } from "./post";
 
 @Entity("blogger_communities")
 export class BloggerCommunityEntity {
@@ -54,6 +55,9 @@ export class BloggerCommunityEntity {
   @ManyToOne(() => BloggerEntity, (blogger) => blogger.bloggerCommunities)
   @JoinColumn({ name: "authorId" })
   author?: BloggerEntity;
+
+  @OneToMany(() => PostEntity, (post) => post.bloggerCommunity)
+  posts?: PostEntity[];
 
   @OneToMany(
     () => CommunityBloggerEntity,

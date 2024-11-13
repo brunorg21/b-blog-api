@@ -11,6 +11,7 @@ import {
 import { BloggerEntity } from "./blogger";
 import { CommentEntity } from "./comment";
 import { PostTopicsEntity } from "./post-topics";
+import { BloggerCommunityEntity } from "./blogger-community";
 
 @Entity("posts")
 export class PostEntity {
@@ -56,6 +57,10 @@ export class PostEntity {
   @ManyToOne(() => BloggerEntity, (blogger) => blogger.posts)
   @JoinColumn({ name: "authorId" })
   author?: BloggerEntity;
+
+  @ManyToOne(() => BloggerCommunityEntity, (blogger) => blogger.posts)
+  @JoinColumn({ name: "bloggerCommunityId" })
+  bloggerCommunity?: BloggerCommunityEntity;
 
   @OneToMany(() => CommentEntity, (comment) => comment.post)
   comments?: CommentEntity[];
