@@ -11,6 +11,7 @@ import {
 import { bloggerRoutes } from "./http/routes/blogger-routes";
 import { ZodError } from "zod";
 import fastifyJwt from "@fastify/jwt";
+import { InternalServerError } from "./http/@errors/internal-server-error";
 
 appDataSource
   .initialize()
@@ -40,6 +41,14 @@ app.register(fastifySwagger, {
   transform: jsonSchemaTransform,
 });
 
+app.setErrorHandler((err, _, reply) => {
+  if (err instanceof ZodError) {
+    return reply.status(400).send({ error: err.message });
+  }
+
+  return reply.status(500).send(new InternalServerError(err.message));
+});
+
 app.register(fastifySwaggerUI, {
   routePrefix: "/docs",
 });
@@ -49,12 +58,6 @@ app.register(fastifyJwt, {
 });
 
 app.register((server) => bloggerRoutes(server).listen());
-
-app.setErrorHandler((err, _, reply) => {
-  if (err instanceof ZodError) {
-    return reply.status(400).send({ error: err.message });
-  }
-});
 
 app
   .listen({
