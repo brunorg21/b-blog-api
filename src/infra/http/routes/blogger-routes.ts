@@ -7,6 +7,9 @@ import { BcryptHasher } from "@/infra/cryptography/bcrypt-hasher";
 import { z } from "zod";
 import { UserAlreadyExistsError } from "@/domain/blog/app/use-cases/@errors/user-already-exists-error";
 import { InvalidCredentialsError } from "@/domain/blog/app/use-cases/@errors/invalid-credentials";
+import { verifyJWT } from "../middlewares/verify-jwt";
+import { ResourceNotFoundError } from "@/domain/blog/app/use-cases/@errors/resource-not-found-error";
+import { Blogger } from "@/domain/blog/enterprise/entities/blogger";
 
 class BloggerRoutes {
   constructor(
@@ -18,14 +21,13 @@ class BloggerRoutes {
     this.app.withTypeProvider<ZodTypeProvider>().route({
       method: "POST",
       url: "/authenticate",
-
       schema: {
         body: authenticateSchema,
         description: "Authenticate",
         tags: ["Blogger"],
         summary: "Authenticate",
         response: {
-          201: z.object({
+          200: z.object({
             token: z.string(),
             blogger: z.object({
               id: z.string(),
@@ -63,7 +65,7 @@ class BloggerRoutes {
             }
           );
 
-          reply.status(201).send({
+          return reply.status(200).send({
             token,
             blogger: {
               id: blogger.id,
@@ -78,7 +80,7 @@ class BloggerRoutes {
             return reply.status(400).send({ error: error.message });
           }
 
-          return reply.status(500).send({ error: "Internal server error" });
+          throw new Error("Internal server error.");
         }
       },
     });
@@ -86,7 +88,6 @@ class BloggerRoutes {
     this.app.withTypeProvider<ZodTypeProvider>().route({
       method: "POST",
       url: "/register",
-
       schema: {
         body: registerSchema,
         description: "Register account blogger",
@@ -103,14 +104,15 @@ class BloggerRoutes {
         try {
           const { email, password, avatarUrl, role, name } = req.body;
 
-          await this.bloggerController.create({
-            email,
-            password,
-            avatarUrl,
-            role,
-            name,
-            updatedAt: null,
-          });
+          await this.bloggerController.create(
+            Blogger.create({
+              avatarUrl,
+              email,
+              name,
+              password,
+              role,
+            })
+          );
 
           reply.status(201).send();
         } catch (error) {
@@ -118,7 +120,56 @@ class BloggerRoutes {
             return reply.status(400).send({ error: error.message });
           }
 
-          return reply.status(500).send({ error: "Internal server error" });
+          throw new Error("Internal server error.");
+        }
+      },
+    });
+
+    this.app.withTypeProvider<ZodTypeProvider>().route({
+      method: "PUT",
+      url: "/blogger",
+      preHandler: [verifyJWT],
+      schema: {
+        body: registerSchema,
+        params: z.object({
+          id: z.string(),
+        }),
+        description: "Update blogger account",
+        tags: ["Blogger"],
+        summary: "Update blogger account",
+        response: {
+          201: z.string(),
+          400: z.object({ error: z.string() }),
+          500: z.object({ error: z.string() }),
+        },
+      },
+
+      handler: async (req, reply) => {
+        try {
+          const { email, password, avatarUrl, role, name } = req.body;
+
+          const { id } = req.params;
+
+          await this.bloggerController.update(
+            Blogger.create(
+              {
+                avatarUrl,
+                email,
+                name,
+                password,
+                role,
+              },
+              id
+            )
+          );
+
+          reply.status(204).send();
+        } catch (error) {
+          if (error instanceof ResourceNotFoundError) {
+            return reply.status(400).send({ error: error.message });
+          }
+
+          throw new Error("Internal server error.");
         }
       },
     });
