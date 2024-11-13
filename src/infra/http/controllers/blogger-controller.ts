@@ -1,5 +1,5 @@
 import { BloggerRepository } from "@/domain/blog/app/repositories/blogger-repository";
-import { ControllerBase } from "./controller-base";
+import { ControllerBase } from "./interfaces/controller-base";
 import { Blogger } from "@/domain/blog/enterprise/entities/blogger";
 import { RegisterBloggerUseCase } from "@/domain/blog/app/use-cases/blogger/register-blogger-use-case";
 
@@ -11,10 +11,9 @@ import { AuthenticateBloggerUseCase } from "@/domain/blog/app/use-cases/blogger/
 import { Hasher } from "@/domain/cryptography/hasher";
 import { UpdateBloggerUseCase } from "@/domain/blog/app/use-cases/blogger/update-blogger-use-case";
 import { DeleteBloggerUseCase } from "@/domain/blog/app/use-cases/blogger/delete-blogger-use-case";
-import { BloggerEntity } from "@/infra/database/typeorm/schemas/blogger";
 
 export class BloggerController
-  implements ControllerBase<BloggerEntity>, BloggerControllerInterface
+  implements ControllerBase<Blogger>, BloggerControllerInterface
 {
   private readonly registerBloggerUseCase: RegisterBloggerUseCase;
   private readonly authenticateBloggerUseCase: AuthenticateBloggerUseCase;
@@ -40,7 +39,7 @@ export class BloggerController
     return blogger;
   }
 
-  async create(data: BloggerEntity): Promise<void> {
+  async create(data: Blogger): Promise<void> {
     await this.registerBloggerUseCase.execute({
       avatarUrl: data.avatarUrl,
       bloggersCommunities: null,
@@ -51,9 +50,9 @@ export class BloggerController
     });
   }
 
-  async update(id: string, data: BloggerEntity): Promise<void> {
+  async update(data: Blogger): Promise<void> {
     await this.updateBloggerUseCase.execute({
-      id,
+      id: data.id,
       avatarUrl: data.avatarUrl,
       email: data.email,
       name: data.name,
