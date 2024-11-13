@@ -4,7 +4,7 @@ services:
   blog-api:
     container_name: api-blog
     build: .
-    command: npm run dev
+    command: npm run start
     ports:
       - 3000:3000
     volumes:
@@ -23,10 +23,10 @@ services:
     volumes:
       - ./data/pg:/data/postgres
 
-  cache:
-    container_name: blog-api-cache
-    image: redis
-    ports:
-      - 6379:6379
-    volumes:
-      - ./data/redis:/data
+  # cache:
+  #   container_name: blog-api-cache
+  #   image: redis
+  #   ports:
+  #     - 6379:6379
+  #   volumes:
+  #     - ./data/redis:/data
