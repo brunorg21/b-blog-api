@@ -23,6 +23,7 @@ export class ToTypeormPostMapper {
         content: postEntity.content,
         likeCount: postEntity.likeCount,
         title: postEntity.title,
+        topics: postEntity.postTopics?.map((e) => e.topicId) ?? [],
       },
       postEntity.id
     );
