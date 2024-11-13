@@ -8,6 +8,7 @@ interface PostProps {
   createdAt?: Date;
   updatedAt: Date | null;
   likeCount: number;
+  topics: string[];
 }
 
 export class Post {
@@ -25,6 +26,9 @@ export class Post {
   }
   get content() {
     return this.props.content;
+  }
+  get topics() {
+    return this.props.topics;
   }
   get authorId() {
     return this.props.authorId;
@@ -46,6 +50,11 @@ export class Post {
 
   set title(title: string) {
     this.props.title = title;
+    this.update();
+  }
+
+  set topics(topics: string[]) {
+    this.props.topics = topics;
     this.update();
   }
   set content(content: string) {
@@ -80,6 +89,7 @@ export class Post {
         title: props.title,
         updatedAt: null,
         likeCount: props.likeCount,
+        topics: props.topics,
       },
       id
     );

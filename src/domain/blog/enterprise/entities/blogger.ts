@@ -5,8 +5,8 @@ interface BloggerProps {
   email: string;
   password: string;
   avatarUrl: string | null;
-  createdAt: Date;
-  updatedAt: Date | null;
+  createdAt?: Date;
+  updatedAt?: Date | null;
   role: "ADMIN" | "COMMON";
 }
 
