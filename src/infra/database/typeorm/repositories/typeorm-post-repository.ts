@@ -4,6 +4,9 @@ import { PostEntity } from "../schemas/post";
 import { Post } from "@/domain/blog/enterprise/entities/post";
 import { ToTypeormPostMapper } from "../mappers/toTypeormPostMapper";
 import { PostRepository } from "@/domain/blog/app/repositories/post-repostitory";
+import { PaginatedParams } from "@/core/params";
+import { ToTypeormPostDetailsMapper } from "../mappers/toTypeormPostDetailsMapper";
+import { PostDetails } from "@/domain/blog/enterprise/entities/value-objects/post-with-details";
 
 export class TypeormPostRepository implements PostRepository {
   private typeormPostRepository: Repository<PostEntity>;
@@ -11,7 +14,29 @@ export class TypeormPostRepository implements PostRepository {
   constructor() {
     this.typeormPostRepository = appDataSource.getRepository(PostEntity);
   }
-  async getAll(): Promise<Post[]> {
+  async getPostsWithDetails({ page }: PaginatedParams): Promise<PostDetails[]> {
+    const posts = await this.typeormPostRepository.find({
+      order: {
+        createdAt: "DESC",
+      },
+      skip: (page - 1) * 10,
+      take: 10,
+      relations: {
+        author: true,
+        comments: {
+          author: true,
+        },
+        bloggerCommunity: true,
+        postTopics: {
+          topic: true,
+        },
+      },
+    });
+
+    return posts.map((post) => ToTypeormPostDetailsMapper.toDomain(post));
+  }
+
+  async getAll(params: PaginatedParams): Promise<Post[]> {
     const posts = await this.typeormPostRepository.find();
 
     return posts.map((post) => ToTypeormPostMapper.toDomain(post));

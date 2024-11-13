@@ -13,6 +13,17 @@ export class TypeormPostTopicsRepository implements PostTopicsRepository {
     this.typeormPostTopicsRepository =
       appDataSource.getRepository(PostTopicsEntity);
   }
+  async getByPostId(postId: string): Promise<PostTopic[]> {
+    const postTopics = await this.typeormPostTopicsRepository.find({
+      where: {
+        postId,
+      },
+    });
+
+    return postTopics.map((postTopic) =>
+      ToTypeormPostTopicsMapper.toDomain(postTopic)
+    );
+  }
   async getAll(): Promise<PostTopic[]> {
     const postTopics = await this.typeormPostTopicsRepository.find();
 
