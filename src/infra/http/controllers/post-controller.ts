@@ -8,8 +8,13 @@ import { UpdatePostUseCase } from "@/domain/blog/app/use-cases/post/update-post-
 import { BloggerRepository } from "@/domain/blog/app/repositories/blogger-repository";
 import { DeletePostUseCase } from "@/domain/blog/app/use-cases/post/delete-post-use-case";
 import { GetPostsUseCase } from "@/domain/blog/app/use-cases/post/get-posts-use-case";
-import { PostControllerInterface } from "./interfaces/post-controller-interface";
+import {
+  PostControllerInterface,
+  UpdatePostProps,
+} from "./interfaces/post-controller-interface";
 import { PaginatedParams } from "@/core/params";
+import { PostDetails } from "@/domain/blog/enterprise/entities/value-objects/post-with-details";
+import { GetPostsWithDetailsUseCase } from "@/domain/blog/app/use-cases/post/get-posts-with-details-use-case";
 
 export class PostController
   implements ControllerBase<Post>, PostControllerInterface
@@ -18,6 +23,7 @@ export class PostController
   private readonly updatePostUseCase: UpdatePostUseCase;
   private readonly deletePostUseCase: DeletePostUseCase;
   private readonly getPostsUseCase: GetPostsUseCase;
+  private readonly getPostsWithDetailsUseCase: GetPostsWithDetailsUseCase;
   constructor(
     postRepository: PostRepository,
     postTopicsRepository: PostTopicsRepository,
@@ -38,6 +44,30 @@ export class PostController
     );
     this.getPostsUseCase = new GetPostsUseCase(postRepository);
   }
+  async updatePost({
+    bloggerId,
+    content,
+    id,
+    title,
+    topics,
+  }: UpdatePostProps): Promise<void> {
+    await this.updatePostUseCase.execute({
+      bloggerId,
+      content,
+      id,
+      title,
+      topics,
+    });
+  }
+
+  async getPostsDetails(params: PaginatedParams): Promise<PostDetails[]> {
+    const { posts } = await this.getPostsWithDetailsUseCase.execute({
+      params,
+    });
+
+    return posts;
+  }
+
   async getPosts(params: PaginatedParams): Promise<Post[]> {
     const { posts } = await this.getPostsUseCase.execute({
       params,
@@ -61,7 +91,7 @@ export class PostController
       id: data.id,
       content: data.content,
       title: data.title,
-      authorId: data.authorId,
+      bloggerId: data.authorId,
       topics: data.topics,
     });
   }
