@@ -45,7 +45,7 @@ export class TypeormPostRepository implements PostRepository {
   async save(post: Post): Promise<void> {
     const typeormPost = ToTypeormPostMapper.toPostEntity(post);
 
-    this.typeormPostRepository.create(typeormPost);
+    this.typeormPostRepository.save(typeormPost);
   }
   async getById(id: string): Promise<Post | null> {
     const post = await this.typeormPostRepository.findOneBy({
@@ -60,7 +60,13 @@ export class TypeormPostRepository implements PostRepository {
   }
 
   async update(post: Post): Promise<void> {
-    await this.typeormPostRepository.save(post);
+    await this.typeormPostRepository.update(post.id, {
+      content: post.content,
+      bloggerCommunityId: post.bloggerCommunityId,
+      authorId: post.authorId,
+      likeCount: post.likeCount,
+      title: post.title,
+    });
   }
 
   async delete(post: Post): Promise<void> {

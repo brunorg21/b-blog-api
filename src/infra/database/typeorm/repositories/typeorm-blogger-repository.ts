@@ -40,7 +40,12 @@ export class TypeormBloggerRepository implements BloggerRepository {
     return bloggers.map((blogger) => ToTypeormBloggerMapper.toDomain(blogger));
   }
   async update(blogger: Blogger): Promise<void> {
-    await this.typeormBloggerRepository.save(blogger);
+    await this.typeormBloggerRepository.update(blogger.id, {
+      name: blogger.name,
+      email: blogger.email,
+      avatarUrl: blogger.avatarUrl,
+      role: blogger.role,
+    });
   }
   async findByEmail(email: string): Promise<Blogger | null> {
     const blogger = await this.typeormBloggerRepository.findOneBy({ email });
