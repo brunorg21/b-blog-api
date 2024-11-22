@@ -10,7 +10,7 @@ interface UpdatePostUseCaseRequest {
   title: string;
   content: string;
   topics: string[];
-  authorId: string;
+  bloggerId: string;
 }
 
 export class UpdatePostUseCase {
@@ -23,7 +23,7 @@ export class UpdatePostUseCase {
     id,
     content,
     title,
-    authorId,
+    bloggerId,
     topics,
   }: UpdatePostUseCaseRequest): Promise<void> {
     const post = await this.postRepository.getById(id);
@@ -63,7 +63,7 @@ export class UpdatePostUseCase {
 
     const editedTopics = await this.postTopicRepository.getByPostId(post.id);
 
-    const blogger = await this.bloggerRepository.getById(authorId);
+    const blogger = await this.bloggerRepository.getById(bloggerId);
 
     if (blogger?.role !== "ADMIN" && post.authorId !== blogger?.id) {
       throw new NotAllowedError();
