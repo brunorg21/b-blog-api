@@ -10,6 +10,15 @@ services:
     volumes:
       - .:/usr/app
       - /usr/app/node_modules
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: docker
+      DB_PASSWORD: docker
+      DB_NAME: blog-api-db
+    depends_on:
+      - postgres
+
   postgres:
     container_name: blog-api-pg
     image: postgres
@@ -19,9 +28,6 @@ services:
       POSTGRES_USER: docker
       POSTGRES_PASSWORD: docker
       POSTGRES_DB: blog-api-db
-      PGDATA: /data/postgres
-    volumes:
-      - ./data/pg:/data/postgres
 
   # cache:
   #   container_name: blog-api-cache
