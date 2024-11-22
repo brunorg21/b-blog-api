@@ -1,7 +1,11 @@
 import { FastifyInstance } from "fastify";
 import { BloggerController } from "../controllers/blogger-controller";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
-import { authenticateSchema, registerSchema } from "@/utils/blogger-schemas";
+import {
+  authenticateSchema,
+  registerSchema,
+  updateBloggerSchema,
+} from "@/utils/blogger-schemas";
 import { TypeormBloggerRepository } from "@/infra/database/typeorm/repositories/typeorm-blogger-repository";
 import { BcryptHasher } from "@/infra/cryptography/bcrypt-hasher";
 import { z } from "zod";
@@ -20,7 +24,7 @@ class BloggerRoutes {
   async listen() {
     this.app.withTypeProvider<ZodTypeProvider>().route({
       method: "POST",
-      url: "/authenticate",
+      url: "/blogger/authenticate",
       schema: {
         body: authenticateSchema,
         description: "Authenticate",
@@ -38,9 +42,6 @@ class BloggerRoutes {
             }),
           }),
           400: z.object({
-            error: z.string(),
-          }),
-          500: z.object({
             error: z.string(),
           }),
         },
@@ -87,17 +88,12 @@ class BloggerRoutes {
 
     this.app.withTypeProvider<ZodTypeProvider>().route({
       method: "POST",
-      url: "/register",
+      url: "/blogger/register",
       schema: {
         body: registerSchema,
         description: "Register account blogger",
         tags: ["Blogger"],
         summary: "Register account blogger",
-        response: {
-          201: z.string(),
-          400: z.object({ error: z.string() }),
-          500: z.object({ error: z.string() }),
-        },
       },
 
       handler: async (req, reply) => {
@@ -127,41 +123,32 @@ class BloggerRoutes {
 
     this.app.withTypeProvider<ZodTypeProvider>().route({
       method: "PUT",
-      url: "/blogger",
+      url: "/blogger/:id",
       preHandler: [verifyJWT],
       schema: {
-        body: registerSchema,
+        body: updateBloggerSchema,
         params: z.object({
           id: z.string(),
         }),
         description: "Update blogger account",
         tags: ["Blogger"],
+        security: [{ bearerAuth: [] }],
         summary: "Update blogger account",
-        response: {
-          201: z.string(),
-          400: z.object({ error: z.string() }),
-          500: z.object({ error: z.string() }),
-        },
       },
 
       handler: async (req, reply) => {
         try {
-          const { email, password, avatarUrl, role, name } = req.body;
+          const { email, avatarUrl, role, name } = req.body;
 
           const { id } = req.params;
 
-          await this.bloggerController.update(
-            Blogger.create(
-              {
-                avatarUrl,
-                email,
-                name,
-                password,
-                role,
-              },
-              id
-            )
-          );
+          await this.bloggerController.updateBlogger({
+            avatarUrl,
+            email,
+            id,
+            name,
+            role,
+          });
 
           reply.status(204).send();
         } catch (error) {
