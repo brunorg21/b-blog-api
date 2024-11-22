@@ -12,3 +12,9 @@ export const registerSchema = z.object({
   avatarUrl: z.string().nullable(),
   role: z.enum(["ADMIN", "COMMON"]).default("COMMON"),
 });
+export const updateBloggerSchema = z.object({
+  name: z.string().max(50),
+  email: z.string().email(),
+  avatarUrl: z.string().nullable(),
+  role: z.enum(["ADMIN", "COMMON"]).default("COMMON"),
+});
