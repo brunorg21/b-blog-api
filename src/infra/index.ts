@@ -12,11 +12,15 @@ import { bloggerRoutes } from "./http/routes/blogger-routes";
 import { ZodError } from "zod";
 import fastifyJwt from "@fastify/jwt";
 import { InternalServerError } from "./http/@errors/internal-server-error";
+import { postRoutes } from "./http/routes/post-routes";
 
-appDataSource
-  .initialize()
-  .then(() => console.log("Database has been initialized ༼ つ ◕_◕ ༽つ"))
-  .catch((err) => console.log("Error during Data Source initialization", err));
+try {
+  await appDataSource.initialize();
+  console.log("Database has been initialized successfully.");
+} catch (err) {
+  console.log("Error during Data Source initialization", err);
+  process.exit(1);
+}
 
 const app = fastify();
 
@@ -37,15 +41,26 @@ app.register(fastifySwagger, {
       version: "1.0.0",
     },
     servers: [],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+        },
+      },
+    },
   },
   transform: jsonSchemaTransform,
 });
 
 app.setErrorHandler((err, _, reply) => {
   if (err instanceof ZodError) {
-    return reply.status(400).send({ error: err.message });
+    return reply.status(400).send({
+      message: 'Validation error',
+      errors: err.flatten().fieldErrors,
+    })
   }
-
+  console.error(err);
   return reply.status(500).send(new InternalServerError(err.message));
 });
 
@@ -58,10 +73,11 @@ app.register(fastifyJwt, {
 });
 
 app.register((server) => bloggerRoutes(server).listen());
+app.register((server) => postRoutes(server).listen());
 
 app
   .listen({
     port: 3000,
     host: "0.0.0.0",
   })
-  .then((e) => console.log(`Server running on ${e} (⌐■_■)`));
+  .then((e) => console.log(`Server running on ${e}`));
