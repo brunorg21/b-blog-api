@@ -6,6 +6,7 @@ import { RegisterBloggerUseCase } from "@/domain/blog/app/use-cases/blogger/regi
 import {
   AuthenticateRequestProps,
   BloggerControllerInterface,
+  UpdateBloggerRequestProps,
 } from "./interfaces/blogger-controller-interface";
 import { AuthenticateBloggerUseCase } from "@/domain/blog/app/use-cases/blogger/authenticate-blogger-use-case";
 import { Hasher } from "@/domain/cryptography/hasher";
@@ -31,6 +32,14 @@ export class BloggerController
     );
     this.updateBloggerUseCase = new UpdateBloggerUseCase(bloggerRepository);
     this.deleteBloggerUseCase = new DeleteBloggerUseCase(bloggerRepository);
+  }
+  async updateBlogger(data: UpdateBloggerRequestProps): Promise<void> {
+    await this.updateBloggerUseCase.execute({
+      id: data.id,
+      avatarUrl: data.avatarUrl,
+      email: data.email,
+      name: data.name,
+    });
   }
 
   async authenticate(data: AuthenticateRequestProps): Promise<Blogger> {
