@@ -1,7 +1,5 @@
 import { BloggersCommunity } from "../bloggers-community";
-import { Comment } from "../comment";
 import { PostComment } from "../post-comment";
-import { Topic } from "../topic";
 import { PostTopic } from "../topic-post";
 
 export interface PostDetailsProps {
