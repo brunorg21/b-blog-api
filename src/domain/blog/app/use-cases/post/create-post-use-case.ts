@@ -32,13 +32,13 @@ export class CreatePostUseCase {
       topics: post.topics,
     });
 
-    await this.postRepository.save(newPost);
+    const postCreated = await this.postRepository.save(newPost);
 
     if (post.topics.length > 0) {
       for (const topic of post.topics) {
         await this.postTopicsRepository.save(
           PostTopic.create({
-            postId: newPost.id,
+            postId: postCreated.id,
             topicId: topic,
           })
         );
