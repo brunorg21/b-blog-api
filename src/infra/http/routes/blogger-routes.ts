@@ -9,10 +9,7 @@ import {
 import { TypeormBloggerRepository } from "@/infra/database/typeorm/repositories/typeorm-blogger-repository";
 import { BcryptHasher } from "@/infra/cryptography/bcrypt-hasher";
 import { z } from "zod";
-import { UserAlreadyExistsError } from "@/domain/blog/app/use-cases/@errors/user-already-exists-error";
-import { InvalidCredentialsError } from "@/domain/blog/app/use-cases/@errors/invalid-credentials";
 import { verifyJWT } from "../middlewares/verify-jwt";
-import { ResourceNotFoundError } from "@/domain/blog/app/use-cases/@errors/resource-not-found-error";
 import { Blogger } from "@/domain/blog/enterprise/entities/blogger";
 
 class BloggerRoutes {
@@ -30,21 +27,6 @@ class BloggerRoutes {
         description: "Authenticate",
         tags: ["Blogger"],
         summary: "Authenticate",
-        response: {
-          200: z.object({
-            token: z.string(),
-            blogger: z.object({
-              id: z.string(),
-              name: z.string(),
-              email: z.string(),
-              avatarUrl: z.string().nullable(),
-              role: z.string(),
-            }),
-          }),
-          400: z.object({
-            error: z.string(),
-          }),
-        },
       },
 
       handler: async (req, reply) => {
@@ -77,11 +59,7 @@ class BloggerRoutes {
             },
           });
         } catch (error) {
-          if (error instanceof InvalidCredentialsError) {
-            return reply.status(400).send({ error: error.message });
-          }
-
-          throw new Error("Internal server error.");
+          reply.send(error);
         }
       },
     });
@@ -112,11 +90,7 @@ class BloggerRoutes {
 
           reply.status(201).send();
         } catch (error) {
-          if (error instanceof UserAlreadyExistsError) {
-            return reply.status(400).send({ error: error.message });
-          }
-
-          throw new Error("Internal server error.");
+          reply.send(error);
         }
       },
     });
@@ -152,11 +126,7 @@ class BloggerRoutes {
 
           reply.status(204).send();
         } catch (error) {
-          if (error instanceof ResourceNotFoundError) {
-            return reply.status(400).send({ error: error.message });
-          }
-
-          throw new Error("Internal server error.");
+          reply.send(error);
         }
       },
     });

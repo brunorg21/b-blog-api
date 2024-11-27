@@ -14,6 +14,9 @@ import {
   updatePostSchema,
 } from "@/utils/post-schemas";
 import { Post } from "@/domain/blog/enterprise/entities/post";
+import { PostDetailsPresenter } from "../presenters/post-details-presenter";
+import { z } from "zod";
+import { PostWithCommentsPresenter } from "../presenters/post-comments-presenter";
 
 class PostRoutes {
   constructor(
@@ -29,7 +32,7 @@ class PostRoutes {
       method: "POST",
       url: "/posts",
       schema: {
-        description: "Adicionar postagem",
+        summary: "Create new post",
         tags: ["Posts"],
         body: createPostSchema,
         security: [{ bearerAuth: [] }],
@@ -39,13 +42,11 @@ class PostRoutes {
         try {
           const { bloggerCommunityId, content, title, topics } = req.body;
 
-          console.log(req.body);
-
           await this.postController.create(
             Post.create({
               likeCount: 0,
               authorId: req.user.sub,
-              bloggerCommunityId,
+              bloggerCommunityId: bloggerCommunityId ?? null,
               content,
               title,
               topics: topics!,
@@ -54,7 +55,7 @@ class PostRoutes {
 
           return reply.status(201).send();
         } catch (error) {
-          throw new Error("Internal server error.");
+          reply.send(error);
         }
       },
     });
@@ -63,7 +64,7 @@ class PostRoutes {
       method: "PUT",
       url: "/posts/:id",
       schema: {
-        description: "Atualizar postagem",
+        summary: "Update post",
         tags: ["Posts"],
         security: [{ bearerAuth: [] }],
         body: updatePostSchema,
@@ -81,12 +82,12 @@ class PostRoutes {
             bloggerId: req.user.sub,
             id,
             title,
-            topics: topics,
+            topics: topics!,
           });
 
           return reply.status(204).send();
         } catch (error) {
-          throw new Error("Internal server error.");
+          reply.send(error);
         }
       },
     });
@@ -95,7 +96,7 @@ class PostRoutes {
       method: "GET",
       url: "/posts",
       schema: {
-        description: "Listar postagens",
+        summary: "List all posts",
         tags: ["Posts"],
         security: [{ bearerAuth: [] }],
         querystring: queryPostSchema,
@@ -110,10 +111,10 @@ class PostRoutes {
           });
 
           return reply.status(200).send({
-            posts,
+            posts: posts.map(PostDetailsPresenter.toHTTP),
           });
         } catch (error) {
-          throw new Error("Internal server error.");
+          reply.send(error);
         }
       },
     });
@@ -122,7 +123,7 @@ class PostRoutes {
       method: "DELETE",
       url: "/posts/:id",
       schema: {
-        description: "Deletar postagem",
+        summary: "Delete post",
         tags: ["Posts"],
         security: [{ bearerAuth: [] }],
         params: paramsPostSchema,
@@ -136,7 +137,33 @@ class PostRoutes {
 
           return reply.status(204).send();
         } catch (error) {
-          throw new Error("Internal server error.");
+          reply.send(error);
+        }
+      },
+    });
+
+    //GET UNIQUE POST
+    this.app.withTypeProvider<ZodTypeProvider>().route({
+      method: "GET",
+      url: "/posts/:id",
+      schema: {
+        summary: "Get unique post",
+        tags: ["Posts"],
+        security: [{ bearerAuth: [] }],
+        params: paramsPostSchema,
+      },
+
+      handler: async (req, reply) => {
+        try {
+          const { id } = req.params;
+
+          const post = await this.postController.getPostWithComments(id);
+
+          return reply.status(200).send({
+            post: PostWithCommentsPresenter.toHTTP(post),
+          });
+        } catch (error) {
+          reply.send(error);
         }
       },
     });
