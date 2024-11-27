@@ -1,5 +1,4 @@
 import { ControllerBase } from "./interfaces/controller-base";
-import { PostEntity } from "@/infra/database/typeorm/schemas/post";
 import { PostRepository } from "@/domain/blog/app/repositories/post-repostitory";
 import { CreatePostUseCase } from "@/domain/blog/app/use-cases/post/create-post-use-case";
 import { PostTopicsRepository } from "@/domain/blog/app/repositories/post-topics-repository";
@@ -15,6 +14,8 @@ import {
 import { PaginatedParams } from "@/core/params";
 import { PostDetails } from "@/domain/blog/enterprise/entities/value-objects/post-with-details";
 import { GetPostsWithDetailsUseCase } from "@/domain/blog/app/use-cases/post/get-posts-with-details-use-case";
+import { GetPostWithCommentsUseCase } from "@/domain/blog/app/use-cases/post/get-post-with-comments-use-case";
+import { PostWithComments } from "@/domain/blog/enterprise/entities/value-objects/post-with-comments";
 
 export class PostController
   implements ControllerBase<Post>, PostControllerInterface
@@ -24,6 +25,7 @@ export class PostController
   private readonly deletePostUseCase: DeletePostUseCase;
   private readonly getPostsUseCase: GetPostsUseCase;
   private readonly getPostsWithDetailsUseCase: GetPostsWithDetailsUseCase;
+  private readonly getPostWithCommentsUseCase: GetPostWithCommentsUseCase;
   constructor(
     postRepository: PostRepository,
     postTopicsRepository: PostTopicsRepository,
@@ -43,6 +45,19 @@ export class PostController
       bloggerRepository
     );
     this.getPostsUseCase = new GetPostsUseCase(postRepository);
+    this.getPostsWithDetailsUseCase = new GetPostsWithDetailsUseCase(
+      postRepository
+    );
+    this.getPostWithCommentsUseCase = new GetPostWithCommentsUseCase(
+      postRepository
+    );
+  }
+  async getPostWithComments(id: string): Promise<PostWithComments> {
+    const { postWithComments } = await this.getPostWithCommentsUseCase.execute({
+      id,
+    });
+
+    return postWithComments;
   }
   async updatePost({
     bloggerId,
