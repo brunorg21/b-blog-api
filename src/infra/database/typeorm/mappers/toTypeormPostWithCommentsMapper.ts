@@ -1,10 +1,11 @@
 import { Post } from "@/domain/blog/enterprise/entities/post";
 import { PostEntity } from "../schemas/post";
-import { PostDetails } from "@/domain/blog/enterprise/entities/value-objects/post-with-details";
 import { ToTypeormBloggerCommunityMapper } from "./toTypeormBloggerCommunityMapper";
 import { ToTypeormPostTopicsMapper } from "./toTypeormPostTopicsMapper";
+import { PostWithComments } from "@/domain/blog/enterprise/entities/value-objects/post-with-comments";
+import { ToTypeormCommentMapper } from "./toTypeormCommentMapper";
 
-export class ToTypeormPostDetailsMapper {
+export class ToTypeormPostWithCommentsMapper {
   static toPostEntity(post: Post): PostEntity {
     return {
       id: post.id,
@@ -18,8 +19,8 @@ export class ToTypeormPostDetailsMapper {
     };
   }
 
-  static toDomain(postEntity: PostEntity): PostDetails {
-    return PostDetails.create({
+  static toDomain(postEntity: PostEntity): PostWithComments {
+    return PostWithComments.create({
       authorId: postEntity.authorId,
       content: postEntity.content,
       likeCount: postEntity.likeCount,
@@ -28,11 +29,13 @@ export class ToTypeormPostDetailsMapper {
         postEntity.postTopics?.map(ToTypeormPostTopicsMapper.toDomain) ?? [],
       author: postEntity.author?.name ?? "",
       bloggerCommunity: postEntity.bloggerCommunity 
-        ? ToTypeormBloggerCommunityMapper.toDomain(postEntity.bloggerCommunity)
-        : null,
+      ? ToTypeormBloggerCommunityMapper.toDomain(postEntity.bloggerCommunity)
+      : null,
       createdAt: postEntity.createdAt!,
       postId: postEntity.id,
       updatedAt: postEntity.updatedAt,
+      comments: postEntity.comments?.map(
+        ToTypeormCommentMapper.toPostCommentDomain) ?? []
     });
   }
 }

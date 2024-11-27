@@ -11,7 +11,7 @@ export class ToTypeormBloggerCommunityMapper {
       authorId: bloggerCommunity.authorId,
       description: bloggerCommunity.description,
       slug: bloggerCommunity.slug,
-      avatarUrl: bloggerCommunity.avatarUrl,
+      avatarUrl: bloggerCommunity?.avatarUrl ?? null,
       createdAt: bloggerCommunity.createdAt,
       updatedAt: bloggerCommunity.updatedAt,
     };
