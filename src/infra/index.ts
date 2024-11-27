@@ -9,10 +9,10 @@ import {
   validatorCompiler,
 } from "fastify-type-provider-zod";
 import { bloggerRoutes } from "./http/routes/blogger-routes";
-import { ZodError } from "zod";
 import fastifyJwt from "@fastify/jwt";
-import { InternalServerError } from "./http/@errors/internal-server-error";
 import { postRoutes } from "./http/routes/post-routes";
+import { errorHandler } from "./error-handler";
+import { topicRoutes } from "./http/routes/topic-routes";
 
 try {
   await appDataSource.initialize();
@@ -53,16 +53,7 @@ app.register(fastifySwagger, {
   transform: jsonSchemaTransform,
 });
 
-app.setErrorHandler((err, _, reply) => {
-  if (err instanceof ZodError) {
-    return reply.status(400).send({
-      message: 'Validation error',
-      errors: err.flatten().fieldErrors,
-    })
-  }
-  console.error(err);
-  return reply.status(500).send(new InternalServerError(err.message));
-});
+app.setErrorHandler(errorHandler);
 
 app.register(fastifySwaggerUI, {
   routePrefix: "/docs",
@@ -74,6 +65,7 @@ app.register(fastifyJwt, {
 
 app.register((server) => bloggerRoutes(server).listen());
 app.register((server) => postRoutes(server).listen());
+app.register((server) => topicRoutes(server).listen());
 
 app
   .listen({
