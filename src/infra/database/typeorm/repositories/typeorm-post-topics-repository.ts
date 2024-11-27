@@ -36,7 +36,7 @@ export class TypeormPostTopicsRepository implements PostTopicsRepository {
     const typeormPostTopic =
       ToTypeormPostTopicsMapper.toPostTopicsEntity(postTopic);
 
-    this.typeormPostTopicsRepository.create(typeormPostTopic);
+    this.typeormPostTopicsRepository.save(typeormPostTopic);
   }
   async getById(id: string): Promise<PostTopic | null> {
     const postTopic = await this.typeormPostTopicsRepository.findOneBy({

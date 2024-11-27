@@ -20,7 +20,7 @@ export class TypeormTopicRepository implements TopicRepository {
   async save(topic: Topic): Promise<void> {
     const typeormTopic = ToTypeormTopicMapper.toTopicEntity(topic);
 
-    this.typeormTopicRepository.create(typeormTopic);
+    this.typeormTopicRepository.save(typeormTopic);
   }
   async getById(id: string): Promise<Topic | null> {
     const topic = await this.typeormTopicRepository.findOneBy({

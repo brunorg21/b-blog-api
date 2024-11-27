@@ -7,6 +7,8 @@ import { PostRepository } from "@/domain/blog/app/repositories/post-repostitory"
 import { PaginatedParams } from "@/core/params";
 import { ToTypeormPostDetailsMapper } from "../mappers/toTypeormPostDetailsMapper";
 import { PostDetails } from "@/domain/blog/enterprise/entities/value-objects/post-with-details";
+import { PostWithComments } from "@/domain/blog/enterprise/entities/value-objects/post-with-comments";
+import { ToTypeormPostWithCommentsMapper } from "../mappers/toTypeormPostWithCommentsMapper";
 
 export class TypeormPostRepository implements PostRepository {
   private typeormPostRepository: Repository<PostEntity>;
@@ -14,8 +16,31 @@ export class TypeormPostRepository implements PostRepository {
   constructor() {
     this.typeormPostRepository = appDataSource.getRepository(PostEntity);
   }
-  async getPostsWithDetails({ page }: PaginatedParams): Promise<PostDetails[]> {
+  async getPostWithComments(id: string): Promise<PostWithComments | null> {
+    const post = await this.typeormPostRepository.findOneBy({
+      id,
+    });
+
+    if (!post) {
+      return null;
+    }
+
+    return ToTypeormPostWithCommentsMapper.toDomain(post);
+  }
+  async getPostsWithDetails({
+    page,
+    query,
+  }: PaginatedParams): Promise<PostDetails[]> {
+    const whereConditions: any = {
+      postTopics: {},
+    };
+
+    if (query) {
+      whereConditions.postTopics.topic.name = query;
+    }
+
     const posts = await this.typeormPostRepository.find({
+      where: whereConditions,
       order: {
         createdAt: "DESC",
       },
@@ -42,10 +67,22 @@ export class TypeormPostRepository implements PostRepository {
     return posts.map((post) => ToTypeormPostMapper.toDomain(post));
   }
 
-  async save(post: Post): Promise<void> {
+  async save(post: Post): Promise<Post> {
     const typeormPost = ToTypeormPostMapper.toPostEntity(post);
 
-    this.typeormPostRepository.save(typeormPost);
+    const newPost = await this.typeormPostRepository.save(typeormPost);
+
+    return Post.create(
+      {
+        authorId: newPost.authorId,
+        bloggerCommunityId: newPost.bloggerCommunityId,
+        content: newPost.content,
+        likeCount: newPost.likeCount,
+        title: newPost.title,
+        topics: newPost.postTopics?.map((e) => e.topicId) ?? [],
+      },
+      newPost.id
+    );
   }
   async getById(id: string): Promise<Post | null> {
     const post = await this.typeormPostRepository.findOneBy({
