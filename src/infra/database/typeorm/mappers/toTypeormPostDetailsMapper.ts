@@ -3,6 +3,7 @@ import { PostEntity } from "../schemas/post";
 import { PostDetails } from "@/domain/blog/enterprise/entities/value-objects/post-with-details";
 import { ToTypeormBloggerCommunityMapper } from "./toTypeormBloggerCommunityMapper";
 import { ToTypeormPostTopicsMapper } from "./toTypeormPostTopicsMapper";
+import { ToTypeormTopicMapper } from "./toTypeormTopicMapper";
 
 export class ToTypeormPostDetailsMapper {
   static toPostEntity(post: Post): PostEntity {
@@ -24,10 +25,18 @@ export class ToTypeormPostDetailsMapper {
       content: postEntity.content,
       likeCount: postEntity.likeCount,
       title: postEntity.title,
-      postTopics:
-        postEntity.postTopics?.map(ToTypeormPostTopicsMapper.toDomain) ?? [],
+      topics:
+        postEntity.postTopics && postEntity.postTopics.length > 0
+          ? postEntity.postTopics.map((topic) =>
+              ToTypeormTopicMapper.toDomain({
+                id: topic.topic?.id ?? "",
+                name: topic.topic?.name ?? "",
+                slug: topic.topic?.slug ?? "",
+              })
+            )
+          : [],
       author: postEntity.author?.name ?? "",
-      bloggerCommunity: postEntity.bloggerCommunity 
+      bloggerCommunity: postEntity.bloggerCommunity
         ? ToTypeormBloggerCommunityMapper.toDomain(postEntity.bloggerCommunity)
         : null,
       createdAt: postEntity.createdAt!,
