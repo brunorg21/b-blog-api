@@ -13,6 +13,7 @@ import fastifyJwt from "@fastify/jwt";
 import { postRoutes } from "./http/routes/post-routes";
 import { errorHandler } from "./error-handler";
 import { topicRoutes } from "./http/routes/topic-routes";
+import { bloggersCommunityRoutes } from "./http/routes/blogger-community-routes";
 
 try {
   await appDataSource.initialize();
@@ -56,7 +57,7 @@ app.register(fastifySwagger, {
 app.setErrorHandler(errorHandler);
 
 app.register(fastifySwaggerUI, {
-  routePrefix: "/docs",
+  routePrefix: "/documentation",
 });
 
 app.register(fastifyJwt, {
@@ -66,6 +67,7 @@ app.register(fastifyJwt, {
 app.register((server) => bloggerRoutes(server).listen());
 app.register((server) => postRoutes(server).listen());
 app.register((server) => topicRoutes(server).listen());
+app.register((server) => bloggersCommunityRoutes(server).listen());
 
 app
   .listen({
