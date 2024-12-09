@@ -6,9 +6,9 @@ import { NotAllowedError } from "../@errors/not-allowed-error";
 import { ResourceNotFoundError } from "../@errors/resource-not-found-error";
 
 interface UpdateBloggersCommunityUseCaseRequest {
-  bloggerId: string;
+  bloggerCommunityId: string;
   description: string;
-  authorId: string;
+  bloggerId: string;
   name: string;
 }
 
@@ -18,20 +18,20 @@ export class UpdateBloggersCommunityUseCase {
     private readonly bloggerRepository: BloggerRepository
   ) {}
   async execute({
-    bloggerId,
+    bloggerCommunityId,
     description,
-    authorId,
+    bloggerId,
     name,
   }: UpdateBloggersCommunityUseCaseRequest): Promise<void> {
     const bloggersCommunity = await this.bloggersCommunityRepository.getById(
-      bloggerId
+      bloggerCommunityId
     );
 
     if (!bloggersCommunity) {
       throw new ResourceNotFoundError();
     }
 
-    const blogger = await this.bloggerRepository.getById(authorId);
+    const blogger = await this.bloggerRepository.getById(bloggerId);
 
     if (
       blogger?.role !== "ADMIN" &&

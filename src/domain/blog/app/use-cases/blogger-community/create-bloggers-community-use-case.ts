@@ -1,7 +1,5 @@
 import { BloggersCommunity } from "@/domain/blog/enterprise/entities/bloggers-community";
 import { BloggersCommunityRepository } from "../../repositories/bloggers-community-repository";
-import { CommunityBloggerRepository } from "../../repositories/community-blogger-repository";
-import { CommunityBlogger } from "@/domain/blog/enterprise/entities/community-blogger";
 
 interface CreateBloggersCommunityUseCaseRequest {
   authorId: string;
@@ -12,7 +10,7 @@ interface CreateBloggersCommunityUseCaseRequest {
 }
 
 interface CreateBloggersCommunityUseCaseResponse {
-  bloggercommunity: BloggersCommunity;
+  bloggerCommunity: BloggersCommunity;
 }
 
 export class CreateBloggersCommunityUseCase {
@@ -36,6 +34,6 @@ export class CreateBloggersCommunityUseCase {
 
     await this.bloggercommunityRepository.save(newBloggerCommunity);
 
-    return { bloggercommunity: newBloggerCommunity };
+    return { bloggerCommunity: newBloggerCommunity };
   }
 }
