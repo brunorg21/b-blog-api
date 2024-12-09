@@ -5,5 +5,6 @@ export interface BloggersCommunityRepository {
   getById(bloggerId: string): Promise<BloggersCommunity | null>;
   update(bloggersCommunity: BloggersCommunity): Promise<void>;
   delete(bloggersCommunity: BloggersCommunity): Promise<void>;
-  getAllById(bloggerId: string): Promise<BloggersCommunity[]>;
+  getAllByAuthorId(bloggerId: string): Promise<BloggersCommunity[]>;
+  getAll(): Promise<BloggersCommunity[]>;
 }
