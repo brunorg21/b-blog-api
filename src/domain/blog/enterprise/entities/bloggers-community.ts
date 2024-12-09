@@ -79,7 +79,7 @@ export class BloggersCommunity {
         createdAt: new Date(),
         description: props.description,
         name: props.name,
-        slug: generateSlug(props.slug),
+        slug: generateSlug(props.name, true),
         updatedAt: null,
         authorId: props.authorId,
       },
