@@ -18,7 +18,7 @@ export class Topic extends Entity<TopicProps> {
     const topic = new Topic(
       {
         ...props,
-        slug: generateSlug(props.name),
+        slug: generateSlug(props.name, false),
       },
       id
     );
