@@ -1,4 +1,5 @@
 import { PostDetails } from "@/domain/blog/enterprise/entities/value-objects/post-with-details";
+import { TopicPresenter } from "./topic-presenter";
 
 export class PostDetailsPresenter {
   static toHTTP(post: PostDetails) {
@@ -11,8 +12,8 @@ export class PostDetailsPresenter {
       updatedAt: post.updatedAt,
       likeCount: post.likeCount,
       bloggerCommunity: post.bloggerCommunity,
-      postTopics: post.postTopics,
-      author: post.author
+      postTopics: post.topics.map(TopicPresenter.toHTTP),
+      author: post.author,
     };
   }
 }
