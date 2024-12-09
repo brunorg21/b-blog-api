@@ -1,5 +1,6 @@
 import { BloggersCommunity } from "../bloggers-community";
-import { PostTopic } from "../topic-post";
+import { Topic } from "../topic";
+
 
 export interface PostDetailsProps {
   postId: string;
@@ -8,7 +9,7 @@ export interface PostDetailsProps {
   title: string;
   content: string;
   bloggerCommunity: BloggersCommunity | null;
-  postTopics: PostTopic[];
+  topics: Topic[];
   createdAt: Date;
   updatedAt?: Date | null;
   likeCount: number;
@@ -38,8 +39,8 @@ export class PostDetails {
     return this.props.likeCount;
   }
 
-  get postTopics() {
-    return this.props.postTopics;
+  get topics() {
+    return this.props.topics;
   }
 
   get authorId() {
