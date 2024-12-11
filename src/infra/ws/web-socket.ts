@@ -16,8 +16,6 @@ const io = new Server(wsApp, {
 });
 
 io.on("connection", (socket) => {
-  console.log("new user connected", socket.id);
-
   const event = new OnInviteToBloggerCommunityEvent(
     socket,
     new TypeormBloggerCommunityRepository(),
@@ -28,4 +26,8 @@ io.on("connection", (socket) => {
   socket.on("send", async (data) => {
     event.dispatch(data);
   });
+});
+
+io.on("disconnect", (socket) => {
+  console.log("user disconnected", socket.id);
 });
