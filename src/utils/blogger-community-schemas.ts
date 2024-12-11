@@ -7,7 +7,7 @@ export const createBloggerCommunitySchema = z.object({
 });
 
 export const updateBloggerCommunitySchema = z.object({
-  description: z.string().max(500).min(15),
+  description: z.string().max(500),
   name: z.string(),
 });
 
