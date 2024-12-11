@@ -3,6 +3,7 @@ import { BloggerRepository } from "@/domain/blog/app/repositories/blogger-reposi
 import { BloggersCommunityRepository } from "@/domain/blog/app/repositories/bloggers-community-repository";
 import { ResourceNotFoundError } from "@/domain/blog/app/use-cases/@errors/resource-not-found-error";
 import { BloggersCommunity } from "@/domain/blog/enterprise/entities/bloggers-community";
+import { Notification } from "../../enterprise/notification";
 
 interface OnInviteBloggerToCommunitySubscriberRequest {
   senderId: string;
@@ -10,7 +11,7 @@ interface OnInviteBloggerToCommunitySubscriberRequest {
   bloggerCommunityId: string;
 }
 interface OnInviteBloggerToCommunitySubscriberResponse {
-  bloggerCommunity: BloggersCommunity;
+  notification: Notification;
 }
 
 export class OnInviteBloggerToCommunitySubscriber {
@@ -29,19 +30,19 @@ export class OnInviteBloggerToCommunitySubscriber {
       bloggerCommunityId
     );
 
-    const senderBlogger = await this.bloggerRepository.getById(recipientId);
+    const senderBlogger = await this.bloggerRepository.getById(senderId);
 
     if (!bloggerCommunity) {
       throw new ResourceNotFoundError();
     }
 
-    await this.sendNotification.execute({
+    const { notification } = await this.sendNotification.execute({
       message: `${senderBlogger?.name} send a invitation to join ${bloggerCommunity?.name}.`,
       recipientId,
       senderId,
       readAt: null,
     });
 
-    return { bloggerCommunity };
+    return { notification };
   }
 }
