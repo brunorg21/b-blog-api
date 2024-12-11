@@ -113,7 +113,7 @@ class BloggersCommunityRoutes {
       method: "GET",
       url: "/bloggersCommunities/:id",
       schema: {
-        summary: "List all bloggersCommunities by author",
+        summary: "Get unique blogger community",
         tags: ["Bloggers Communities"],
         security: [{ bearerAuth: [] }],
         params: paramsBloggersCommunitySchema,
