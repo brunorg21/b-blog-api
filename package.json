@@ -32,6 +32,7 @@
     "fastify-type-provider-zod": "^4.0.2",
     "pg": "^8.13.0",
     "reflect-metadata": "^0.2.2",
+    "socket.io": "^4.8.1",
     "typeorm": "^0.3.20",
     "zod": "^3.23.8"
   }
