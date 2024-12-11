@@ -31,11 +31,11 @@ export class TypeormBloggerCommunityRepository
       slug: bloggersCommunity.slug,
     });
   }
-  async getById(bloggerId: string): Promise<BloggersCommunity | null> {
+  async getById(bloggerCommunityId: string): Promise<BloggersCommunity | null> {
     const bloggerComunity =
       await this.typeormBloggerCommunityRepository.findOne({
         where: {
-          id: bloggerId,
+          id: bloggerCommunityId,
         },
       });
 
@@ -46,19 +46,33 @@ export class TypeormBloggerCommunityRepository
     return ToTypeormBloggerCommunityMapper.toDomain(bloggerComunity);
   }
   async update(bloggersCommunity: BloggersCommunity): Promise<void> {
-    await this.typeormBloggerCommunityRepository.update(
-      bloggersCommunity.id,
-      bloggersCommunity
-    );
+    await this.typeormBloggerCommunityRepository.update(bloggersCommunity.id, {
+      description: bloggersCommunity.description,
+      name: bloggersCommunity.name,
+      updatedAt: bloggersCommunity.updatedAt,
+      slug: bloggersCommunity.slug,
+    });
   }
   async delete(bloggersCommunity: BloggersCommunity): Promise<void> {
-    await this.typeormBloggerCommunityRepository.remove(bloggersCommunity);
+    await this.typeormBloggerCommunityRepository.remove({
+      authorId: bloggersCommunity.authorId,
+      avatarUrl: bloggersCommunity.avatarUrl,
+      description: bloggersCommunity.description,
+      id: bloggersCommunity.id,
+      name: bloggersCommunity.name,
+      slug: bloggersCommunity.slug,
+      updatedAt: bloggersCommunity.updatedAt ?? null,
+      createdAt: bloggersCommunity.createdAt,
+    });
   }
   async getAllByAuthorId(bloggerId: string): Promise<BloggersCommunity[]> {
     const bloggersCommunities =
       await this.typeormBloggerCommunityRepository.find({
         where: {
           authorId: bloggerId,
+        },
+        order: {
+          createdAt: "DESC",
         },
       });
 
