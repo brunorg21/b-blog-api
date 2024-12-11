@@ -18,7 +18,7 @@ export class TypeormNotificationRepository implements NotificationRepository {
     const typeormNotification =
       ToTypeormNotificationMapper.toNotificationEntity(notification);
 
-    this.typeormNotificationRepository.create(typeormNotification);
+    this.typeormNotificationRepository.save(typeormNotification);
   }
   async getById(id: string): Promise<Notification | null> {
     const notification = await this.typeormNotificationRepository.findOneBy({
