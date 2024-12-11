@@ -14,12 +14,23 @@ import { postRoutes } from "./http/routes/post-routes";
 import { errorHandler } from "./error-handler";
 import { topicRoutes } from "./http/routes/topic-routes";
 import { bloggersCommunityRoutes } from "./http/routes/blogger-community-routes";
+import { communityBloggerRoutes } from "./http/routes/community-blogger-routes";
+import { wsApp } from "./ws/web-socket";
 
 try {
   await appDataSource.initialize();
   console.log("Database has been initialized successfully.");
 } catch (err) {
   console.log("Error during Data Source initialization", err);
+  process.exit(1);
+}
+
+try {
+  wsApp.listen(3001, () => {
+    console.log("WebSocket server listening on port 3001");
+  });
+} catch (err) {
+  console.log("Error during socket initialization", err);
   process.exit(1);
 }
 
@@ -68,6 +79,7 @@ app.register((server) => bloggerRoutes(server).listen());
 app.register((server) => postRoutes(server).listen());
 app.register((server) => topicRoutes(server).listen());
 app.register((server) => bloggersCommunityRoutes(server).listen());
+app.register((server) => communityBloggerRoutes(server).listen());
 
 app
   .listen({
