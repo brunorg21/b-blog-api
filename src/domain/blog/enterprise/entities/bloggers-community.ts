@@ -7,8 +7,8 @@ interface BloggersCommunityProps {
   avatarUrl: string | null;
   authorId: string;
   slug: string;
-  createdAt: Date;
-  updatedAt: Date | null;
+  createdAt?: Date;
+  updatedAt?: Date | null;
 }
 
 export class BloggersCommunity {
@@ -69,18 +69,15 @@ export class BloggersCommunity {
     this.props.updatedAt = new Date();
   }
 
-  static create(
-    props: Omit<BloggersCommunityProps, "createdAt" | "updatedAt">,
-    id?: string
-  ) {
+  static create(props: BloggersCommunityProps, id?: string) {
     const bloggerscommunity = new BloggersCommunity(
       {
         avatarUrl: props.avatarUrl,
-        createdAt: new Date(),
+        createdAt: props.createdAt ?? new Date(),
         description: props.description,
         name: props.name,
         slug: generateSlug(props.name, true),
-        updatedAt: null,
+        updatedAt: props.updatedAt ?? null,
         authorId: props.authorId,
       },
       id
