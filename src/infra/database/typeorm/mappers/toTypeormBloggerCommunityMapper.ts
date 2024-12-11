@@ -13,7 +13,7 @@ export class ToTypeormBloggerCommunityMapper {
       slug: bloggerCommunity.slug,
       avatarUrl: bloggerCommunity?.avatarUrl ?? null,
       createdAt: bloggerCommunity.createdAt,
-      updatedAt: bloggerCommunity.updatedAt,
+      updatedAt: bloggerCommunity.updatedAt ?? null,
     };
   }
 
@@ -26,7 +26,9 @@ export class ToTypeormBloggerCommunityMapper {
         authorId: bloggerCommunityEntity.authorId,
         description: bloggerCommunityEntity.description,
         name: bloggerCommunityEntity.name,
-        slug: bloggerCommunityEntity.slug,
+        slug: bloggerCommunityEntity.name,
+        createdAt: bloggerCommunityEntity.createdAt!,
+        updatedAt: bloggerCommunityEntity.updatedAt,
       },
       bloggerCommunityEntity.id
     );
