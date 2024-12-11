@@ -32,7 +32,7 @@ export class InviteBloggerToCommunityUseCase {
 
     if (alreadyMemberOfCommunity) {
       const blogger = await this.bloggerRepository.getById(
-        communityBlogger.bloggerId
+        alreadyMemberOfCommunity.bloggerId
       );
 
       throw new BloggerAlreadyMemberOfCommunityError(blogger?.name ?? "");
