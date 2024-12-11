@@ -11,6 +11,7 @@ import { BloggerCommunityEntity } from "./blogger-community";
 import { CommentEntity } from "./comment";
 import { CommunityBloggerEntity } from "./community-blogger";
 import { NotificationEntity } from "./notification";
+import { PostLikeEntity } from "./post-likes";
 
 @Entity("blogger")
 export class BloggerEntity {
@@ -65,6 +66,9 @@ export class BloggerEntity {
 
   @OneToMany(() => CommentEntity, (comment) => comment.author)
   comments?: CommentEntity[];
+
+  @OneToMany(() => PostLikeEntity, (postLike) => postLike.blogger)
+  likes?: PostLikeEntity[];
 
   @OneToMany(
     () => CommunityBloggerEntity,

@@ -4,11 +4,14 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { PostEntity } from "./post";
 import { BloggerEntity } from "./blogger";
+import { CommentLike } from "@/domain/blog/enterprise/entities/comment-like";
+import { CommentLikeEntity } from "./comment-likes";
 
 @Entity("comments")
 export class CommentEntity {
@@ -43,6 +46,9 @@ export class CommentEntity {
     nullable: true,
   })
   updatedAt: Date | null;
+
+  @OneToMany(() => CommentLikeEntity, (commentLike) => commentLike.comment)
+  likes?: CommentLikeEntity[];
 
   @ManyToOne(() => PostEntity, (post) => post.comments)
   @JoinColumn({
