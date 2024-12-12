@@ -35,9 +35,9 @@ export class TypeormPostCommentRepository implements PostCommentRepository {
   }
   async save(postComment: PostComment): Promise<void> {
     const typeormPostComment =
-      ToTypeormCommentMapper.toPostCommentDomain(postComment);
+      ToTypeormCommentMapper.toCommentEntityForPost(postComment);
 
-    this.typeormPostCommentRepository.create(typeormPostComment);
+    this.typeormPostCommentRepository.save(typeormPostComment);
   }
 
   async getById(id: string): Promise<PostComment | null> {

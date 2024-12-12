@@ -30,13 +30,17 @@ export class TypeormPostLikesRepository implements PostLikeRepository {
     return ToTypeormPostLikesMapper.toDomain(postLike);
   }
   async save(postLike: PostLike): Promise<void> {
-    await this.typeormPostLikesRepository.save(postLike);
+    const postLikeEntity = ToTypeormPostLikesMapper.toPostLikeEntity(postLike);
+
+    await this.typeormPostLikesRepository.save(postLikeEntity);
   }
   async update(postLike: PostLike): Promise<void> {
     await this.typeormPostLikesRepository.update(postLike.id, postLike);
   }
   async delete(postLike: PostLike): Promise<void> {
-    await this.typeormPostLikesRepository.remove(postLike);
+    const postLikeEntity = ToTypeormPostLikesMapper.toPostLikeEntity(postLike);
+
+    await this.typeormPostLikesRepository.remove(postLikeEntity);
   }
   async getByPostId(postId: string): Promise<PostLike[]> {
     const postLikes = await this.typeormPostLikesRepository.find({

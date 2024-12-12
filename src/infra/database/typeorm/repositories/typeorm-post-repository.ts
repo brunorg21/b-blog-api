@@ -17,8 +17,20 @@ export class TypeormPostRepository implements PostRepository {
     this.typeormPostRepository = appDataSource.getRepository(PostEntity);
   }
   async getPostWithComments(id: string): Promise<PostWithComments | null> {
-    const post = await this.typeormPostRepository.findOneBy({
-      id,
+    const post = await this.typeormPostRepository.findOne({
+      where: {
+        id,
+      },
+      relations: {
+        bloggerCommunity: true,
+        author: true,
+        comments: {
+          author: true,
+        },
+        postTopics: {
+          topic: true,
+        },
+      },
     });
 
     if (!post) {
