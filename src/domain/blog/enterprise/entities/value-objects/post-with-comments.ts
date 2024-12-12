@@ -1,6 +1,7 @@
 import { BloggersCommunity } from "../bloggers-community";
 import { PostComment } from "../post-comment";
-import { PostTopic } from "../topic-post";
+import { Topic } from "../topic";
+import { CommentDetails } from "./comment-details";
 
 export interface PostWithCommentsProps {
   postId: string;
@@ -9,8 +10,8 @@ export interface PostWithCommentsProps {
   title: string;
   content: string;
   bloggerCommunity: BloggersCommunity | null;
-  postTopics: PostTopic[];
-  comments: PostComment[];
+  postTopics: Topic[];
+  comments: CommentDetails[];
   createdAt: Date;
   updatedAt?: Date | null;
   likeCount: number;
