@@ -18,74 +18,79 @@ import { communityBloggerRoutes } from "./http/routes/community-blogger-routes";
 import { wsApp } from "./ws/web-socket";
 import { postCommentRoutes } from "./http/routes/post-comment-routes";
 
-try {
-  await appDataSource.initialize();
-  console.log("Database has been initialized successfully.");
-} catch (err) {
-  console.log("Error during Data Source initialization", err);
-  process.exit(1);
-}
+export const initializeServer = async () => {
+  try {
+    await appDataSource.initialize();
+    console.log("Database has been initialized successfully.");
+  } catch (err) {
+    console.log("Error during Data Source initialization", err);
+    process.exit(1);
+  }
 
-try {
-  wsApp.listen(3001, () => {
-    console.log("WebSocket server listening on port 3001");
+  try {
+    wsApp.listen(3001, () => {
+      console.log("WebSocket server listening on port 3001");
+    });
+  } catch (err) {
+    console.log("Error during socket initialization", err);
+    process.exit(1);
+  }
+
+  const app = fastify();
+
+  await app.register(fastifyCors, {
+    origin: "*",
+    allowedHeaders: ["Content-Type", "Authorization"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   });
-} catch (err) {
-  console.log("Error during socket initialization", err);
-  process.exit(1);
-}
 
-const app = fastify();
+  app.setValidatorCompiler(validatorCompiler);
+  app.setSerializerCompiler(serializerCompiler);
 
-await app.register(fastifyCors, {
-  origin: "*",
-  allowedHeaders: ["Content-Type", "Authorization"],
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-});
-
-app.setValidatorCompiler(validatorCompiler);
-app.setSerializerCompiler(serializerCompiler);
-
-app.register(fastifySwagger, {
-  openapi: {
-    info: {
-      title: "blog-api",
-      description: "an api for blog",
-      version: "1.0.0",
-    },
-    servers: [],
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: "http",
-          scheme: "bearer",
+  app.register(fastifySwagger, {
+    openapi: {
+      info: {
+        title: "blog-api",
+        description: "an api for blog",
+        version: "1.0.0",
+      },
+      servers: [],
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: "http",
+            scheme: "bearer",
+          },
         },
       },
     },
-  },
-  transform: jsonSchemaTransform,
-});
+    transform: jsonSchemaTransform,
+  });
 
-app.setErrorHandler(errorHandler);
+  app.setErrorHandler(errorHandler);
 
-app.register(fastifySwaggerUI, {
-  routePrefix: "/documentation",
-});
+  app.register(fastifySwaggerUI, {
+    routePrefix: "/documentation",
+  });
 
-app.register(fastifyJwt, {
-  secret: "secret",
-});
+  app.register(fastifyJwt, {
+    secret: "secret",
+  });
 
-app.register((server) => bloggerRoutes(server).listen());
-app.register((server) => postRoutes(server).listen());
-app.register((server) => topicRoutes(server).listen());
-app.register((server) => bloggersCommunityRoutes(server).listen());
-app.register((server) => communityBloggerRoutes(server).listen());
-app.register((server) => postCommentRoutes(server).listen());
+  app.register((server) => bloggerRoutes(server).listen());
+  app.register((server) => postRoutes(server).listen());
+  app.register((server) => topicRoutes(server).listen());
+  app.register((server) => bloggersCommunityRoutes(server).listen());
+  app.register((server) => communityBloggerRoutes(server).listen());
+  app.register((server) => postCommentRoutes(server).listen());
 
-app
-  .listen({
-    port: 3000,
-    host: "0.0.0.0",
-  })
-  .then((e) => console.log(`Server running on ${e}`));
+  try {
+    await app.listen({
+      port: 3000,
+      host: "0.0.0.0",
+    });
+  } catch (err) {
+    console.log("Error during server initialization", err);
+    process.exit(1);
+  }
+};
