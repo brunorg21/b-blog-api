@@ -8,6 +8,7 @@ import { BloggerRepository } from "@/domain/blog/app/repositories/blogger-reposi
 import { DeletePostUseCase } from "@/domain/blog/app/use-cases/post/delete-post-use-case";
 import { GetPostsUseCase } from "@/domain/blog/app/use-cases/post/get-posts-use-case";
 import {
+  LikePostProps,
   PostControllerInterface,
   UpdatePostProps,
 } from "./interfaces/post-controller-interface";
@@ -16,6 +17,9 @@ import { PostDetails } from "@/domain/blog/enterprise/entities/value-objects/pos
 import { GetPostsWithDetailsUseCase } from "@/domain/blog/app/use-cases/post/get-posts-with-details-use-case";
 import { GetPostWithCommentsUseCase } from "@/domain/blog/app/use-cases/post/get-post-with-comments-use-case";
 import { PostWithComments } from "@/domain/blog/enterprise/entities/value-objects/post-with-comments";
+import { LikePostUseCase } from "@/domain/blog/app/use-cases/post/like-post-use-case";
+import { PostLikeRepository } from "@/domain/blog/app/repositories/post-like-repository";
+import { RemoveLikePostUseCase } from "@/domain/blog/app/use-cases/post/remove-like-post-use-case";
 
 export class PostController
   implements ControllerBase<Post>, PostControllerInterface
@@ -26,10 +30,13 @@ export class PostController
   private readonly getPostsUseCase: GetPostsUseCase;
   private readonly getPostsWithDetailsUseCase: GetPostsWithDetailsUseCase;
   private readonly getPostWithCommentsUseCase: GetPostWithCommentsUseCase;
+  private readonly likePostUseCase: LikePostUseCase;
+  private readonly removeLikePostUseCase: RemoveLikePostUseCase;
   constructor(
     postRepository: PostRepository,
     postTopicsRepository: PostTopicsRepository,
-    bloggerRepository: BloggerRepository
+    bloggerRepository: BloggerRepository,
+    postLikeRepository: PostLikeRepository
   ) {
     this.createPostUseCase = new CreatePostUseCase(
       postRepository,
@@ -51,7 +58,17 @@ export class PostController
     this.getPostWithCommentsUseCase = new GetPostWithCommentsUseCase(
       postRepository
     );
+    this.likePostUseCase = new LikePostUseCase(
+      postRepository,
+      postLikeRepository
+    );
+
+    this.removeLikePostUseCase = new RemoveLikePostUseCase(
+      postRepository,
+      postLikeRepository
+    );
   }
+
   async getPostWithComments(id: string): Promise<PostWithComments> {
     const { postWithComments } = await this.getPostWithCommentsUseCase.execute({
       id,
@@ -114,6 +131,20 @@ export class PostController
     await this.deletePostUseCase.execute({
       bloggerId,
       id,
+    });
+  }
+
+  async likePost({ bloggerId, postId }: LikePostProps): Promise<void> {
+    await this.likePostUseCase.execute({
+      bloggerId,
+      postId,
+    });
+  }
+
+  async removeLikePost({ bloggerId, postId }: LikePostProps): Promise<void> {
+    await this.removeLikePostUseCase.execute({
+      bloggerId,
+      postId,
     });
   }
 }
