@@ -16,6 +16,7 @@ import { topicRoutes } from "./http/routes/topic-routes";
 import { bloggersCommunityRoutes } from "./http/routes/blogger-community-routes";
 import { communityBloggerRoutes } from "./http/routes/community-blogger-routes";
 import { wsApp } from "./ws/web-socket";
+import { postCommentRoutes } from "./http/routes/post-comment-routes";
 
 try {
   await appDataSource.initialize();
@@ -80,6 +81,7 @@ app.register((server) => postRoutes(server).listen());
 app.register((server) => topicRoutes(server).listen());
 app.register((server) => bloggersCommunityRoutes(server).listen());
 app.register((server) => communityBloggerRoutes(server).listen());
+app.register((server) => postCommentRoutes(server).listen());
 
 app
   .listen({
