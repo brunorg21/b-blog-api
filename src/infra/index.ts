@@ -75,7 +75,7 @@ export const initializeServer = async () => {
   });
 
   app.register(fastifyJwt, {
-    secret: "secret",
+    secret: env.SECRET_KEY,
   });
 
   app.register((server) => bloggerRoutes(server).listen());
