@@ -1,11 +1,8 @@
-import { PostTopic } from "@/domain/blog/enterprise/entities/topic-post";
 import {
   Column,
-  CreateDateColumn,
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from "typeorm";
 import { PostTopicsEntity } from "./post-topics";
 

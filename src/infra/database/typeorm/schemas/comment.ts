@@ -10,7 +10,6 @@ import {
 } from "typeorm";
 import { PostEntity } from "./post";
 import { BloggerEntity } from "./blogger";
-import { CommentLike } from "@/domain/blog/enterprise/entities/comment-like";
 import { CommentLikeEntity } from "./comment-likes";
 
 @Entity("comments")
