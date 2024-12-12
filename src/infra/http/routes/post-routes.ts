@@ -15,8 +15,8 @@ import {
 } from "@/utils/post-schemas";
 import { Post } from "@/domain/blog/enterprise/entities/post";
 import { PostDetailsPresenter } from "../presenters/post-details-presenter";
-import { z } from "zod";
 import { PostWithCommentsPresenter } from "../presenters/post-comments-presenter";
+import { TypeormPostLikesRepository } from "@/infra/database/typeorm/repositories/typeorm-post-likes-repository";
 
 class PostRoutes {
   constructor(
@@ -91,6 +91,60 @@ class PostRoutes {
         }
       },
     });
+
+    //PATCH
+    this.app.withTypeProvider<ZodTypeProvider>().route({
+      method: "PATCH",
+      url: "/posts/like/:id",
+      schema: {
+        summary: "Like post",
+        tags: ["Posts"],
+        security: [{ bearerAuth: [] }],
+        params: paramsPostSchema,
+      },
+
+      handler: async (req, reply) => {
+        try {
+          const { id } = req.params;
+
+          await this.postController.likePost({
+            bloggerId: req.user.sub,
+            postId: id,
+          });
+
+          return reply.status(204).send();
+        } catch (error) {
+          reply.send(error);
+        }
+      },
+    });
+    //PATCH
+    this.app.withTypeProvider<ZodTypeProvider>().route({
+      method: "PATCH",
+      url: "/posts/remove-like/:id",
+      schema: {
+        summary: "Remove like post",
+        tags: ["Posts"],
+        security: [{ bearerAuth: [] }],
+        params: paramsPostSchema,
+      },
+
+      handler: async (req, reply) => {
+        try {
+          const { id } = req.params;
+
+          await this.postController.removeLikePost({
+            bloggerId: req.user.sub,
+            postId: id,
+          });
+
+          return reply.status(204).send();
+        } catch (error) {
+          reply.send(error);
+        }
+      },
+    });
+
     //GET
     this.app.withTypeProvider<ZodTypeProvider>().route({
       method: "GET",
@@ -174,10 +228,16 @@ export const postRoutes = (app: FastifyInstance) => {
   const postRepository = new TypeormPostRepository();
   const bloggerRepository = new TypeormBloggerRepository();
   const postTopicsRepository = new TypeormPostTopicsRepository();
+  const postLikeRepository = new TypeormPostLikesRepository();
 
   const postController = new PostRoutes(
     app,
-    new PostController(postRepository, postTopicsRepository, bloggerRepository)
+    new PostController(
+      postRepository,
+      postTopicsRepository,
+      bloggerRepository,
+      postLikeRepository
+    )
   );
 
   return postController;
