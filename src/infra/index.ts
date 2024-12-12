@@ -17,6 +17,7 @@ import { bloggersCommunityRoutes } from "./http/routes/blogger-community-routes"
 import { communityBloggerRoutes } from "./http/routes/community-blogger-routes";
 import { wsApp } from "./ws/web-socket";
 import { postCommentRoutes } from "./http/routes/post-comment-routes";
+import { env } from "@/env";
 
 export const initializeServer = async () => {
   try {
@@ -28,7 +29,7 @@ export const initializeServer = async () => {
   }
 
   try {
-    wsApp.listen(3001, () => {
+    wsApp.listen(env.WS_PORT, () => {
       console.log("WebSocket server listening on port 3001");
     });
   } catch (err) {
@@ -86,7 +87,7 @@ export const initializeServer = async () => {
 
   try {
     await app.listen({
-      port: 3000,
+      port: env.SERVER_PORT,
       host: "0.0.0.0",
     });
   } catch (err) {
