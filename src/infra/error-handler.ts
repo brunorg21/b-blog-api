@@ -5,6 +5,8 @@ import { UserAlreadyExistsError } from "@/domain/blog/app/use-cases/@errors/user
 import { FastifyError, FastifyReply, FastifyRequest } from "fastify";
 import { ZodError } from "zod";
 import { InternalServerError } from "./http/@errors/internal-server-error";
+import { BloggerAlreadyLikeCommentError } from "@/domain/blog/app/use-cases/@errors/blogger-already-like-comment-error";
+import { BloggerAlreadyLikePostError } from "@/domain/blog/app/use-cases/@errors/blogger-already-like-post-error";
 
 export function errorHandler(
   err: FastifyError,
@@ -45,6 +47,17 @@ export function errorHandler(
 
   if (err instanceof NotAllowedError) {
     return reply.status(405).send({
+      message: err.message,
+    });
+  }
+
+  if (err instanceof BloggerAlreadyLikeCommentError) {
+    return reply.status(400).send({
+      message: err.message,
+    });
+  }
+  if (err instanceof BloggerAlreadyLikePostError) {
+    return reply.status(400).send({
       message: err.message,
     });
   }
