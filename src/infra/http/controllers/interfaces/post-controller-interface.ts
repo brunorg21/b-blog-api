@@ -12,9 +12,16 @@ export interface UpdatePostProps {
   topics: string[];
 }
 
+export interface LikePostProps {
+  bloggerId: string;
+  postId: string;
+}
+
 export interface PostControllerInterface {
   getPosts(params: PaginatedParams): Promise<Post[]>;
   getPostsDetails(params: PaginatedParams): Promise<PostDetails[]>;
   getPostWithComments(id: string): Promise<PostWithComments>;
   updatePost(props: UpdatePostProps): Promise<void>;
+  likePost(props: LikePostProps): Promise<void>;
+  removeLikePost(props: LikePostProps): Promise<void>;
 }
