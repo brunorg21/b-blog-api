@@ -1,5 +1,6 @@
 import { PostWithComments } from "@/domain/blog/enterprise/entities/value-objects/post-with-comments";
-
+import { TopicPresenter } from "./topic-presenter";
+import { CommentDetailsPresenter } from "./comment-details-presenter";
 
 export class PostWithCommentsPresenter {
   static toHTTP(post: PostWithComments) {
@@ -12,9 +13,9 @@ export class PostWithCommentsPresenter {
       updatedAt: post.updatedAt,
       likeCount: post.likeCount,
       bloggerCommunity: post.bloggerCommunity,
-      postTopics: post.postTopics,
+      postTopics: post.postTopics.map(TopicPresenter.toHTTP),
       author: post.author,
-      comments: post.comments
+      comments: post.comments.map(CommentDetailsPresenter.toHTTP),
     };
   }
 }
