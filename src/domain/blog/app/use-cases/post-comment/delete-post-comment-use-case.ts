@@ -5,7 +5,7 @@ import { ResourceNotFoundError } from "../@errors/resource-not-found-error";
 
 interface DeletePostCommentUseCaseRequest {
   postCommentId: string;
-  authorId: string;
+  bloggerId: string;
 }
 
 export class DeletePostCommentUseCase {
@@ -15,7 +15,7 @@ export class DeletePostCommentUseCase {
   ) {}
   async execute({
     postCommentId,
-    authorId,
+    bloggerId,
   }: DeletePostCommentUseCaseRequest): Promise<void> {
     const postComment = await this.postcommentRepository.getById(postCommentId);
 
@@ -23,9 +23,9 @@ export class DeletePostCommentUseCase {
       throw new ResourceNotFoundError();
     }
 
-    const blogger = await this.bloggerRepository.getById(authorId);
+    const blogger = await this.bloggerRepository.getById(bloggerId);
 
-    if (blogger?.role !== "ADMIN" && postComment.authorId !== authorId) {
+    if (blogger?.role !== "ADMIN" && postComment.authorId !== bloggerId) {
       throw new NotAllowedError();
     }
 
