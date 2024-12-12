@@ -20,9 +20,9 @@ class CommunityBloggerRoutes {
     //POST
     this.app.withTypeProvider<ZodTypeProvider>().route({
       method: "POST",
-      url: "/accept-invite",
+      url: "/invite",
       schema: {
-        summary: "Accept invite to blogger community",
+        summary: "Invite blogger to community",
         tags: ["Blogger Community"],
         body: acceptInviteSchema,
         security: [{ bearerAuth: [] }],
@@ -32,7 +32,7 @@ class CommunityBloggerRoutes {
         try {
           const { bloggerCommunityId, bloggerId } = req.body;
 
-          await this.communityBloggerController.acceptInvite({
+          await this.communityBloggerController.inviteBloggerToCommunity({
             bloggerCommunityId,
             bloggerId,
           });
