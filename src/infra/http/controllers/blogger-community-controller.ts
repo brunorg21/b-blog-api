@@ -12,6 +12,7 @@ import { BloggerRepository } from "@/domain/blog/app/repositories/blogger-reposi
 import { UpdateBloggersCommunityUseCase } from "@/domain/blog/app/use-cases/blogger-community/update-bloggers-community-use-case";
 import { GetUniqueBloggersCommunityUseCase } from "@/domain/blog/app/use-cases/blogger-community/get-unique-bloggers-community-use-case";
 import { GetAllBloggersCommunitiesUseCase } from "@/domain/blog/app/use-cases/blogger-community/get-all-bloggers-community-use-case";
+import { GetBloggersCommunityBySlugUseCase } from "@/domain/blog/app/use-cases/blogger-community/get-bloggers-community-by-slug-use-case";
 
 export class BloggerCommunityController
   implements
@@ -24,6 +25,7 @@ export class BloggerCommunityController
   private readonly updateBloggerCommunityUseCase: UpdateBloggersCommunityUseCase;
   private readonly getUniqueBloggerCommunityUseCase: GetUniqueBloggersCommunityUseCase;
   private readonly getAllBloggersCommunityUseCase: GetAllBloggersCommunitiesUseCase;
+  private readonly getBloggersCommunityBySlugUseCase: GetBloggersCommunityBySlugUseCase;
 
   constructor(
     bloggerCommunityRepository: BloggersCommunityRepository,
@@ -48,6 +50,14 @@ export class BloggerCommunityController
       bloggerCommunityRepository,
       bloggerRepository
     );
+    this.getBloggersCommunityBySlugUseCase =
+      new GetBloggersCommunityBySlugUseCase(bloggerCommunityRepository);
+  }
+  async getBySlug(slug: string): Promise<BloggersCommunity> {
+    const { bloggersCommunity } =
+      await this.getBloggersCommunityBySlugUseCase.execute({ slug });
+
+    return bloggersCommunity;
   }
 
   async create(data: BloggersCommunity): Promise<void> {
