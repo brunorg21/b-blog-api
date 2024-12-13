@@ -11,7 +11,7 @@ import { PostWithComments } from "@/domain/blog/enterprise/entities/value-object
 import { ToTypeormPostWithCommentsMapper } from "../mappers/toTypeormPostWithCommentsMapper";
 
 export class TypeormPostRepository implements PostRepository {
-  private typeormPostRepository: Repository<PostEntity>;
+  private readonly typeormPostRepository: Repository<PostEntity>;
 
   constructor() {
     this.typeormPostRepository = appDataSource.getRepository(PostEntity);
@@ -43,16 +43,14 @@ export class TypeormPostRepository implements PostRepository {
     page,
     query,
   }: PaginatedParams): Promise<PostDetails[]> {
-    const whereConditions: any = {
-      postTopics: {},
-    };
-
-    if (query) {
-      whereConditions.postTopics.topic.name = query;
-    }
-
     const posts = await this.typeormPostRepository.find({
-      where: whereConditions,
+      where: {
+        postTopics: {
+          topic: {
+            slug: query,
+          },
+        },
+      },
       order: {
         createdAt: "DESC",
       },
