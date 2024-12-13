@@ -4,6 +4,8 @@ import { TypeormBloggerRepository } from "../database/typeorm/repositories/typeo
 import { TypeormBloggerCommunityRepository } from "../database/typeorm/repositories/typeorm-bloggers-community-repository";
 import { TypeormNotificationRepository } from "../database/typeorm/repositories/typeorm-notification-repository";
 import { OnInviteToBloggerCommunityEvent } from "./events/on-invite-to-blogger-community-event";
+import { RedisClient } from "../cache/redis/redis-client";
+import { RedisRepository } from "../cache/redis/redis-repository";
 
 export const wsApp = createServer();
 
@@ -14,9 +16,13 @@ const io = new Server(wsApp, {
 });
 
 io.on("connection", (socket) => {
+  const redis = RedisClient.getInstance();
+
+  const redisRepository = new RedisRepository(redis);
+
   const event = new OnInviteToBloggerCommunityEvent(
     socket,
-    new TypeormBloggerCommunityRepository(),
+    new TypeormBloggerCommunityRepository(redisRepository),
     new TypeormBloggerRepository(),
     new TypeormNotificationRepository()
   );
