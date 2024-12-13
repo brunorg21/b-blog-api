@@ -158,10 +158,11 @@ class PostRoutes {
 
       handler: async (req, reply) => {
         try {
-          const { page } = req.query;
+          const { page, slug } = req.query;
 
           const posts = await this.postController.getPostsDetails({
             page: page!,
+            query: slug,
           });
 
           return reply.status(200).send({
