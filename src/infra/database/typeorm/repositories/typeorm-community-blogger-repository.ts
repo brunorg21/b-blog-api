@@ -25,10 +25,4 @@ export class TypeormCommunityBloggerRepository
       ToTypeormCommunityBloggerMapper.toDomain(communityBlogger)
     );
   }
-  getByBloggerIdAndBloggerCommunityId(
-    bloggerId: string,
-    bloggerCommunityId: string
-  ): Promise<CommunityBlogger | null> {
-    throw new Error("Method not implemented.");
-  }
 }
