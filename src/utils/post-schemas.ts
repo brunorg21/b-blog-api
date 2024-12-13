@@ -19,4 +19,5 @@ export const paramsPostSchema = z.object({
 
 export const queryPostSchema = z.object({
   page: z.coerce.number().default(1).optional(),
+  slug: z.coerce.string().optional(),
 });

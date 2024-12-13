@@ -12,3 +12,11 @@ export const updateCommentSchema = z.object({
 export const paramsCommentSchema = z.object({
   id: z.string(),
 });
+
+export const queryCommentSchema = z.object({
+  page: z.coerce.number().default(1).optional(),
+});
+
+export const commentByPostSchema = z.object({
+  postId: z.string(),
+});
