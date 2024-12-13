@@ -4,16 +4,45 @@ import { Repository } from "typeorm";
 import { appDataSource } from "..";
 import { BloggerCommunityEntity } from "../schemas/blogger-community";
 import { ToTypeormBloggerCommunityMapper } from "../mappers/toTypeormBloggerCommunityMapper";
+import { CacheRepository } from "@/infra/cache/cache-repository";
 
 export class TypeormBloggerCommunityRepository
   implements BloggersCommunityRepository
 {
   private typeormBloggerCommunityRepository: Repository<BloggerCommunityEntity>;
+  private cacheRepository: CacheRepository;
 
-  constructor() {
+  constructor(cacheRepository: CacheRepository) {
     this.typeormBloggerCommunityRepository = appDataSource.getRepository(
       BloggerCommunityEntity
     );
+    this.cacheRepository = cacheRepository;
+  }
+  async getBySlug(slug: string): Promise<BloggersCommunity | null> {
+    const cachedBloggerCommunity = await this.cacheRepository.get(
+      `blogger-community-${slug}`
+    );
+    if (cachedBloggerCommunity) {
+      return JSON.parse(cachedBloggerCommunity);
+    }
+
+    const bloggerCommunity =
+      await this.typeormBloggerCommunityRepository.findOne({
+        where: {
+          slug,
+        },
+      });
+
+    if (!bloggerCommunity) {
+      return null;
+    }
+
+    await this.cacheRepository.set(
+      `blogger-community-${slug}`,
+      JSON.stringify(bloggerCommunity)
+    );
+
+    return ToTypeormBloggerCommunityMapper.toDomain(bloggerCommunity);
   }
   async getAll(): Promise<BloggersCommunity[]> {
     const bloggerCommunities =
@@ -52,6 +81,10 @@ export class TypeormBloggerCommunityRepository
       updatedAt: bloggersCommunity.updatedAt,
       slug: bloggersCommunity.slug,
     });
+
+    await this.cacheRepository.delete(
+      `blogger-community-${bloggersCommunity.slug}`
+    );
   }
   async delete(bloggersCommunity: BloggersCommunity): Promise<void> {
     await this.typeormBloggerCommunityRepository.remove({

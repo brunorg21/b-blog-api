@@ -16,4 +16,5 @@ export interface BloggerCommunityControllerInterface {
     data: UpdateBloggersCommunityRequest,
     bloggerId: string
   ): void;
+  getBySlug(slug: string): Promise<BloggersCommunity>;
 }

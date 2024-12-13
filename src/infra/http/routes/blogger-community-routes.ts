@@ -5,12 +5,15 @@ import { BloggerCommunityController } from "../controllers/blogger-community-con
 import { BloggersCommunity } from "@/domain/blog/enterprise/entities/bloggers-community";
 import {
   createBloggerCommunitySchema,
+  paramsBloggersCommunityBySlugSchema,
   paramsBloggersCommunitySchema,
   updateBloggerCommunitySchema,
 } from "@/utils/blogger-community-schemas";
 import { TypeormBloggerCommunityRepository } from "@/infra/database/typeorm/repositories/typeorm-bloggers-community-repository";
 import { TypeormBloggerRepository } from "@/infra/database/typeorm/repositories/typeorm-blogger-repository";
 import { BloggersCommunityPresenter } from "../presenters/bloggers-community-presenter";
+import { RedisClient } from "@/infra/cache/redis/redis-client";
+import { RedisRepository } from "@/infra/cache/redis/redis-repository";
 
 class BloggersCommunityRoutes {
   constructor(
@@ -137,6 +140,33 @@ class BloggersCommunityRoutes {
         }
       },
     });
+    //GET UNIQUE BY SLUG
+    this.app.withTypeProvider<ZodTypeProvider>().route({
+      method: "GET",
+      url: "/bloggersCommunities/details/:slug",
+      schema: {
+        summary: "Get unique blogger community by slug",
+        tags: ["Bloggers Communities"],
+        security: [{ bearerAuth: [] }],
+        params: paramsBloggersCommunityBySlugSchema,
+      },
+
+      handler: async (req, reply) => {
+        try {
+          const { slug } = req.params;
+
+          const bloggerCommunity =
+            await this.bloggerCommunityController.getBySlug(slug);
+
+          return reply.status(200).send({
+            bloggerCommunity:
+              BloggersCommunityPresenter.toHTTP(bloggerCommunity),
+          });
+        } catch (error) {
+          reply.send(error);
+        }
+      },
+    });
     //DELETE
     this.app.withTypeProvider<ZodTypeProvider>().route({
       method: "DELETE",
@@ -197,7 +227,13 @@ class BloggersCommunityRoutes {
 }
 
 export const bloggersCommunityRoutes = (app: FastifyInstance) => {
-  const bloggersCommunityRepository = new TypeormBloggerCommunityRepository();
+  const redis = RedisClient.getInstance();
+
+  const redisRepository = new RedisRepository(redis);
+
+  const bloggersCommunityRepository = new TypeormBloggerCommunityRepository(
+    redisRepository
+  );
   const bloggerRepository = new TypeormBloggerRepository();
 
   const bloggersCommunityController = new BloggersCommunityRoutes(
