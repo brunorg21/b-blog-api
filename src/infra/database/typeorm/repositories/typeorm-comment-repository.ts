@@ -6,6 +6,8 @@ import { PostCommentRepository } from "@/domain/blog/app/repositories/post-comme
 import { PostComment } from "@/domain/blog/enterprise/entities/post-comment";
 import { PaginatedParams } from "@/core/params";
 import { ToTypeormCommentMapper } from "../mappers/toTypeormCommentMapper";
+import { CommentDetails } from "@/domain/blog/enterprise/entities/value-objects/comment-details";
+import { ToTypeormCommentDetailsMapper } from "../mappers/toTypeormCommentDetailsMapper";
 
 export class TypeormPostCommentRepository implements PostCommentRepository {
   private typeormPostCommentRepository: Repository<CommentEntity>;
@@ -17,7 +19,7 @@ export class TypeormPostCommentRepository implements PostCommentRepository {
   async getByPost(
     { page }: PaginatedParams,
     postId: string
-  ): Promise<PostComment[]> {
+  ): Promise<CommentDetails[]> {
     const postComments = await this.typeormPostCommentRepository.find({
       where: {
         postId,
@@ -30,7 +32,7 @@ export class TypeormPostCommentRepository implements PostCommentRepository {
     });
 
     return postComments.map((postComment) =>
-      ToTypeormCommentMapper.toPostCommentDomain(postComment)
+      ToTypeormCommentDetailsMapper.toDomain(postComment)
     );
   }
   async save(postComment: PostComment): Promise<void> {
