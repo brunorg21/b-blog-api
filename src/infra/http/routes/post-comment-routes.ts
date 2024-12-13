@@ -4,13 +4,16 @@ import { TypeormBloggerRepository } from "@/infra/database/typeorm/repositories/
 import { verifyJWT } from "../middlewares/verify-jwt";
 import { PostCommentController } from "../controllers/post-comment-controller";
 import {
+  commentByPostSchema,
   createCommentSchema,
   paramsCommentSchema,
+  queryCommentSchema,
   updateCommentSchema,
 } from "@/utils/comment-schemas";
 import { PostComment } from "@/domain/blog/enterprise/entities/post-comment";
 import { TypeormPostCommentRepository } from "@/infra/database/typeorm/repositories/typeorm-comment-repository";
 import { TypeormCommentLikesRepository } from "@/infra/database/typeorm/repositories/typeorm-comment-likes-repository";
+import { CommentDetailsPresenter } from "../presenters/comment-details-presenter";
 
 class PostCommentRoutes {
   constructor(
@@ -21,6 +24,40 @@ class PostCommentRoutes {
   async listen() {
     this.app.addHook("onRequest", verifyJWT);
 
+    //GET
+    this.app.withTypeProvider<ZodTypeProvider>().route({
+      method: "GET",
+      url: "/comments/:postId",
+      schema: {
+        summary: "Get comments",
+        tags: ["Comments"],
+        querystring: queryCommentSchema,
+        params: commentByPostSchema,
+        security: [{ bearerAuth: [] }],
+      },
+
+      handler: async (req, reply) => {
+        try {
+          const { page } = req.query;
+
+          const { postId } = req.params;
+
+          const comments =
+            await this.postCommentController.getPostCommentsByPost(
+              {
+                page: page!,
+              },
+              postId
+            );
+
+          return reply.status(200).send({
+            comments: comments.map(CommentDetailsPresenter.toHTTP),
+          });
+        } catch (error) {
+          reply.send(error);
+        }
+      },
+    });
     //POST
     this.app.withTypeProvider<ZodTypeProvider>().route({
       method: "POST",

@@ -1,6 +1,7 @@
 import { PostComment } from "@/domain/blog/enterprise/entities/post-comment";
 import { PostCommentRepository } from "../../repositories/post-comment-repository";
 import { PaginatedParams } from "@/core/params";
+import { CommentDetails } from "@/domain/blog/enterprise/entities/value-objects/comment-details";
 
 interface GetPostCommentsByPostUseCaseRequest {
   params: PaginatedParams;
@@ -8,7 +9,7 @@ interface GetPostCommentsByPostUseCaseRequest {
 }
 
 interface GetPostCommentsByPostUseCaseResponse {
-  postComments: PostComment[];
+  postComments: CommentDetails[];
 }
 
 export class GetPostCommentsUseCase {

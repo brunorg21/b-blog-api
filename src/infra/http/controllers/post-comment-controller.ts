@@ -13,6 +13,10 @@ import {
   UpdatePostCommentProps,
 } from "./interfaces/post-comment-controller-interface";
 import { RemoveLikeCommentUseCase } from "@/domain/blog/app/use-cases/post-comment/remove-like-comment-use-case";
+import { GetPostCommentsUseCase } from "@/domain/blog/app/use-cases/post-comment/get-post-comments-by-post-use-case";
+import { PaginatedParams } from "@/core/params";
+import { CommentDetails } from "@/domain/blog/enterprise/entities/value-objects/comment-details";
+import { ToTypeormCommentDetailsMapper } from "@/infra/database/typeorm/mappers/toTypeormCommentDetailsMapper";
 
 export class PostCommentController
   implements ControllerBase<PostComment>, PostCommentControllerInterface
@@ -22,6 +26,7 @@ export class PostCommentController
   private deletePostCommentUseCase: DeletePostCommentUseCase;
   private likePostCommentUseCase: LikePostCommentUseCase;
   private removeLikePostCommentUseCase: RemoveLikeCommentUseCase;
+  private getPostCommentByPostUseCase: GetPostCommentsUseCase;
   constructor(
     postCommentRepository: PostCommentRepository,
     bloggerRepository: BloggerRepository,
@@ -46,7 +51,21 @@ export class PostCommentController
       postCommentRepository,
       commentLikeRepository
     );
+    this.getPostCommentByPostUseCase = new GetPostCommentsUseCase(
+      postCommentRepository
+    );
   }
+  async getPostCommentsByPost(
+    params: PaginatedParams,
+    postId: string
+  ): Promise<CommentDetails[]> {
+    const { postComments } = await this.getPostCommentByPostUseCase.execute({
+      params,
+      postId,
+    });
+    return postComments;
+  }
+
   async updatePostComment({
     authorId,
     content,
