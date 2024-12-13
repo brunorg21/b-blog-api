@@ -17,7 +17,7 @@ export class CreateTopicUseCase {
   ): Promise<CreateTopicUseCaseResponse> {
     const newTopic = Topic.create({
       name: topic.name,
-      slug: generateSlug(topic.name, false),
+      slug: generateSlug(topic.name),
     });
 
     await this.topicRepository.save(newTopic);
