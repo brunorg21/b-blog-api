@@ -1,5 +1,5 @@
-export function generateSlug(text: string, hasPrefix: boolean = true): string {
+export function generateSlug(text: string): string {
   const slug = text.trim().toLowerCase().replace(/\s+/g, "-");
 
-  return hasPrefix ? `b/${slug}` : slug;
+  return `b/${slug}`;
 }
