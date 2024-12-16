@@ -1,4 +1,4 @@
-import { createServer } from "http";
+import { createServer } from "node:http";
 import { Server } from "socket.io";
 import { TypeormBloggerRepository } from "../database/typeorm/repositories/typeorm-blogger-repository";
 import { TypeormBloggerCommunityRepository } from "../database/typeorm/repositories/typeorm-bloggers-community-repository";
