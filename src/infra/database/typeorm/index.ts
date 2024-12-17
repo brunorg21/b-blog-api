@@ -18,6 +18,19 @@ import { TopicEntity } from "./schemas/topic";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+export async function runMigrationsIfNeeded(dataSource: DataSource) {
+  console.log("Checking for pending migrations...");
+
+  const migrations = await dataSource.showMigrations();
+
+  if (migrations) {
+    console.log("Pending migrations found. Applying migrations...");
+    await dataSource.runMigrations();
+  } else {
+    console.log("Database is already up to date. Skipping migrations.");
+  }
+}
+
 export const appDataSource = new DataSource({
   type: "postgres",
   host: env.DB_HOST,

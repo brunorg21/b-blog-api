@@ -1,5 +1,5 @@
 import fastify from "fastify";
-import { appDataSource } from "./database/typeorm";
+import { appDataSource, runMigrationsIfNeeded } from "./database/typeorm";
 import fastifyCors from "@fastify/cors";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUI from "@fastify/swagger-ui";
@@ -22,6 +22,7 @@ import { env } from "@/env";
 export const initializeServer = async () => {
   try {
     await appDataSource.initialize();
+    await runMigrationsIfNeeded(appDataSource);
     console.log("Database has been initialized successfully.");
   } catch (err) {
     console.log("Error during Data Source initialization", err);
