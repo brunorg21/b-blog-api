@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch ./src/server.ts",
-    "start": "tsx ./node_modules/typeorm/cli -d ./src/infra/database/typeorm/index.ts migration:generate ./src/infra/database/typeorm/migrations/default && tsx ./node_modules/typeorm/cli migration:run -d ./src/infra/database/typeorm/index.ts && tsx ./src/server.ts",
+    "start": "tsx ./src/server.ts",
     "migrate:create": "tsx ./node_modules/typeorm/cli -d ./src/infra/database/typeorm/index.ts migration:generate ./src/infra/database/typeorm/migrations/default",
     "migrate:run": "tsx ./node_modules/typeorm/cli migration:run -d ./src/infra/database/typeorm/index.ts"
   },
