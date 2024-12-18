@@ -17,4 +17,7 @@ export interface BloggerCommunityControllerInterface {
     bloggerId: string
   ): void;
   getBySlug(slug: string): Promise<BloggersCommunity>;
+  getBloggerCommunitiesByBlogger(
+    bloggerId: string
+  ): Promise<BloggersCommunity[]>;
 }

@@ -1,6 +1,6 @@
 import { BloggersCommunityRepository } from "@/domain/blog/app/repositories/bloggers-community-repository";
 import { BloggersCommunity } from "@/domain/blog/enterprise/entities/bloggers-community";
-import { Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 import { appDataSource } from "..";
 import { BloggerCommunityEntity } from "../schemas/blogger-community";
 import { ToTypeormBloggerCommunityMapper } from "../mappers/toTypeormBloggerCommunityMapper";
@@ -17,6 +17,14 @@ export class TypeormBloggerCommunityRepository
       BloggerCommunityEntity
     );
     this.cacheRepository = cacheRepository;
+  }
+  async getByIds(bloggerCommunityIds: string[]): Promise<BloggersCommunity[]> {
+    const bloggersCommunities =
+      await this.typeormBloggerCommunityRepository.find({
+        where: { id: In(bloggerCommunityIds) },
+      });
+
+    return bloggersCommunities.map(ToTypeormBloggerCommunityMapper.toDomain);
   }
   async getBySlug(slug: string): Promise<BloggersCommunity | null> {
     const cachedBloggerCommunity = await this.cacheRepository.get(

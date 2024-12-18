@@ -8,4 +8,5 @@ export interface BloggersCommunityRepository {
   getAllByAuthorId(bloggerId: string): Promise<BloggersCommunity[]>;
   getAll(): Promise<BloggersCommunity[]>;
   getBySlug(slug: string): Promise<BloggersCommunity | null>;
+  getByIds(bloggerCommunityIds: string[]): Promise<BloggersCommunity[]>;
 }

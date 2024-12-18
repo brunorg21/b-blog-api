@@ -14,6 +14,7 @@ import { TypeormBloggerRepository } from "@/infra/database/typeorm/repositories/
 import { BloggersCommunityPresenter } from "../presenters/bloggers-community-presenter";
 import { RedisClient } from "@/infra/cache/redis/redis-client";
 import { RedisRepository } from "@/infra/cache/redis/redis-repository";
+import { TypeormCommunityBloggerRepository } from "@/infra/database/typeorm/repositories/typeorm-community-blogger-repository";
 
 class BloggersCommunityRoutes {
   constructor(
@@ -97,6 +98,33 @@ class BloggersCommunityRoutes {
         try {
           const bloggersCommunities =
             await this.bloggerCommunityController.getBloggerCommunitiesByAuthor(
+              req.user.sub
+            );
+
+          return reply.status(200).send({
+            bloggersCommunities: bloggersCommunities.map(
+              BloggersCommunityPresenter.toHTTP
+            ),
+          });
+        } catch (error) {
+          reply.send(error);
+        }
+      },
+    });
+    //GET BY BLOGGER
+    this.app.withTypeProvider<ZodTypeProvider>().route({
+      method: "GET",
+      url: "/bloggersCommunities/blogger",
+      schema: {
+        summary: "List all bloggersCommunities by blogger",
+        tags: ["Bloggers Communities"],
+        security: [{ bearerAuth: [] }],
+      },
+
+      handler: async (req, reply) => {
+        try {
+          const bloggersCommunities =
+            await this.bloggerCommunityController.getBloggerCommunitiesByBlogger(
               req.user.sub
             );
 
@@ -235,12 +263,14 @@ export const bloggersCommunityRoutes = (app: FastifyInstance) => {
     redisRepository
   );
   const bloggerRepository = new TypeormBloggerRepository();
+  const communityBloggerRepository = new TypeormCommunityBloggerRepository();
 
   const bloggersCommunityController = new BloggersCommunityRoutes(
     app,
     new BloggerCommunityController(
       bloggersCommunityRepository,
-      bloggerRepository
+      bloggerRepository,
+      communityBloggerRepository
     )
   );
 

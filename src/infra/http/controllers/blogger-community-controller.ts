@@ -13,6 +13,8 @@ import { UpdateBloggersCommunityUseCase } from "@/domain/blog/app/use-cases/blog
 import { GetUniqueBloggersCommunityUseCase } from "@/domain/blog/app/use-cases/blogger-community/get-unique-bloggers-community-use-case";
 import { GetAllBloggersCommunitiesUseCase } from "@/domain/blog/app/use-cases/blogger-community/get-all-bloggers-community-use-case";
 import { GetBloggersCommunityBySlugUseCase } from "@/domain/blog/app/use-cases/blogger-community/get-bloggers-community-by-slug-use-case";
+import { GetAllBloggersCommunitiesByBloggerUseCase } from "@/domain/blog/app/use-cases/blogger-community/get-all-bloggers-community-by-blogger-use-case";
+import { CommunityBloggerRepository } from "@/domain/blog/app/repositories/community-blogger-repository";
 
 export class BloggerCommunityController
   implements
@@ -26,10 +28,12 @@ export class BloggerCommunityController
   private readonly getUniqueBloggerCommunityUseCase: GetUniqueBloggersCommunityUseCase;
   private readonly getAllBloggersCommunityUseCase: GetAllBloggersCommunitiesUseCase;
   private readonly getBloggersCommunityBySlugUseCase: GetBloggersCommunityBySlugUseCase;
+  private readonly getBloggersCommunityByBloggerUseCase: GetAllBloggersCommunitiesByBloggerUseCase;
 
   constructor(
     bloggerCommunityRepository: BloggersCommunityRepository,
-    bloggerRepository: BloggerRepository
+    bloggerRepository: BloggerRepository,
+    communityRepository: CommunityBloggerRepository
   ) {
     this.createBloggerCommunityUseCase = new CreateBloggersCommunityUseCase(
       bloggerCommunityRepository
@@ -52,6 +56,11 @@ export class BloggerCommunityController
     );
     this.getBloggersCommunityBySlugUseCase =
       new GetBloggersCommunityBySlugUseCase(bloggerCommunityRepository);
+    this.getBloggersCommunityByBloggerUseCase =
+      new GetAllBloggersCommunitiesByBloggerUseCase(
+        bloggerCommunityRepository,
+        communityRepository
+      );
   }
   async getBySlug(slug: string): Promise<BloggersCommunity> {
     const { bloggersCommunity } =
@@ -82,6 +91,14 @@ export class BloggerCommunityController
   ): Promise<BloggersCommunity[]> {
     const { bloggersCommunities } =
       await this.getBloggersCommunityByAuthorUseCase.execute({ bloggerId });
+
+    return bloggersCommunities;
+  }
+  async getBloggerCommunitiesByBlogger(
+    bloggerId: string
+  ): Promise<BloggersCommunity[]> {
+    const { bloggersCommunities } =
+      await this.getBloggersCommunityByBloggerUseCase.execute({ bloggerId });
 
     return bloggersCommunities;
   }
