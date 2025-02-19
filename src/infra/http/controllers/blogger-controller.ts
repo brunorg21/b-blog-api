@@ -12,6 +12,7 @@ import { AuthenticateBloggerUseCase } from "@/domain/blog/app/use-cases/blogger/
 import { Hasher } from "@/domain/cryptography/hasher";
 import { UpdateBloggerUseCase } from "@/domain/blog/app/use-cases/blogger/update-blogger-use-case";
 import { DeleteBloggerUseCase } from "@/domain/blog/app/use-cases/blogger/delete-blogger-use-case";
+import { GetAuthenticatedBloggerUseCase } from "@/domain/blog/app/use-cases/blogger/get-authenticated-blogger-use-case";
 
 export class BloggerController
   implements ControllerBase<Blogger>, BloggerControllerInterface
@@ -20,6 +21,7 @@ export class BloggerController
   private readonly authenticateBloggerUseCase: AuthenticateBloggerUseCase;
   private readonly updateBloggerUseCase: UpdateBloggerUseCase;
   private readonly deleteBloggerUseCase: DeleteBloggerUseCase;
+  private readonly getAuthenticatedBloggerUseCase: GetAuthenticatedBloggerUseCase;
 
   constructor(bloggerRepository: BloggerRepository, hasher: Hasher) {
     this.registerBloggerUseCase = new RegisterBloggerUseCase(
@@ -32,6 +34,9 @@ export class BloggerController
     );
     this.updateBloggerUseCase = new UpdateBloggerUseCase(bloggerRepository);
     this.deleteBloggerUseCase = new DeleteBloggerUseCase(bloggerRepository);
+    this.getAuthenticatedBloggerUseCase = new GetAuthenticatedBloggerUseCase(
+      bloggerRepository
+    );
   }
   async updateBlogger(data: UpdateBloggerRequestProps): Promise<void> {
     await this.updateBloggerUseCase.execute({
@@ -40,6 +45,13 @@ export class BloggerController
       email: data.email,
       name: data.name,
     });
+  }
+
+  async getAuthenticatedBlogger(bloggerId: string): Promise<Blogger> {
+    const { blogger } = await this.getAuthenticatedBloggerUseCase.execute({
+      bloggerId,
+    });
+    return blogger;
   }
 
   async authenticate(data: AuthenticateRequestProps): Promise<Blogger> {

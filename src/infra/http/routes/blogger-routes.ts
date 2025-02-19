@@ -11,6 +11,7 @@ import { BcryptHasher } from "@/infra/cryptography/bcrypt-hasher";
 import { z } from "zod";
 import { verifyJWT } from "../middlewares/verify-jwt";
 import { Blogger } from "@/domain/blog/enterprise/entities/blogger";
+import { BloggerPresenter } from "../presenters/blogger-presenter";
 
 class BloggerRoutes {
   constructor(
@@ -43,7 +44,7 @@ class BloggerRoutes {
             {
               sign: {
                 sub: blogger.id,
-                expiresIn: "1d",
+                expiresIn: "7d",
               },
             }
           );
@@ -89,6 +90,30 @@ class BloggerRoutes {
           );
 
           reply.status(201).send();
+        } catch (error) {
+          reply.send(error);
+        }
+      },
+    });
+    this.app.withTypeProvider<ZodTypeProvider>().route({
+      method: "GET",
+      url: "/blogger/me",
+      schema: {
+        description: "Get blogger profile",
+        tags: ["Blogger"],
+        summary: "Get blogger profile",
+      },
+      preHandler: [verifyJWT],
+
+      handler: async (req, reply) => {
+        try {
+          const blogger = await this.bloggerController.getAuthenticatedBlogger(
+            req.user.sub
+          );
+
+          reply.status(200).send({
+            blogger: BloggerPresenter.toHTTP(blogger),
+          });
         } catch (error) {
           reply.send(error);
         }

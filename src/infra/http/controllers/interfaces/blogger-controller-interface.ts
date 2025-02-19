@@ -16,4 +16,5 @@ export interface UpdateBloggerRequestProps {
 export interface BloggerControllerInterface {
   authenticate(data: AuthenticateRequestProps): Promise<Blogger>;
   updateBlogger(data: UpdateBloggerRequestProps): Promise<void>;
+  getAuthenticatedBlogger(bloggerId: string): Promise<Blogger>;
 }
