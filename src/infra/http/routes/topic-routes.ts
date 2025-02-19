@@ -30,13 +30,15 @@ class TopicRoutes {
 
       handler: async (req, reply) => {
         try {
-          const { name } = req.body;
+          const topics = req.body;
 
-          await this.topicController.create(
-            Topic.create({
-              name,
-              slug: name,
-            })
+          await this.topicController.createTopic(
+            topics.map((topic) =>
+              Topic.create({
+                name: topic.name,
+                slug: topic.name,
+              })
+            )
           );
 
           return reply.status(201).send();

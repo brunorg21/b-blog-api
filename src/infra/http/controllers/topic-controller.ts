@@ -17,9 +17,13 @@ export class TopicController implements ControllerBase<Topic> {
   }
 
   async create(data: Topic): Promise<void> {
-    await this.createTopicUseCase.execute({
-      name: data.name,
-    });
+    await this.createTopicUseCase.execute([data]);
+  }
+
+  async createTopic(data: Topic[]): Promise<{ topics: Topic[] }> {
+    const { topics } = await this.createTopicUseCase.execute(data);
+
+    return { topics };
   }
 
   async get(): Promise<Topic[]> {

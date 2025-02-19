@@ -7,21 +7,27 @@ interface CreateTopicUseCaseRequest {
 }
 
 interface CreateTopicUseCaseResponse {
-  topic: Topic;
+  topics: Topic[];
 }
 
 export class CreateTopicUseCase {
   constructor(private readonly topicRepository: TopicRepository) {}
   async execute(
-    topic: CreateTopicUseCaseRequest
+    topics: CreateTopicUseCaseRequest[]
   ): Promise<CreateTopicUseCaseResponse> {
-    const newTopic = Topic.create({
-      name: topic.name,
-      slug: generateSlug(topic.name),
-    });
+    let createdTopics: Topic[] = [];
 
-    await this.topicRepository.save(newTopic);
+    for (const topic of topics) {
+      const newTopic = Topic.create({
+        name: topic.name,
+        slug: generateSlug(topic.name),
+      });
 
-    return { topic: newTopic };
+      const createdTopic = await this.topicRepository.save(newTopic);
+
+      createdTopics.push(createdTopic);
+    }
+
+    return { topics: createdTopics };
   }
 }
