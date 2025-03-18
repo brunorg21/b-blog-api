@@ -1,7 +1,5 @@
 import { BloggersCommunity } from "@/domain/blog/enterprise/entities/bloggers-community";
 
-
-
 export class BloggersCommunityPresenter {
   static toHTTP(bloggerCommunity: BloggersCommunity) {
     return {
@@ -12,7 +10,7 @@ export class BloggersCommunityPresenter {
       slug: bloggerCommunity.slug,
       avatarUrl: bloggerCommunity?.avatarUrl ?? null,
       createdAt: bloggerCommunity.createdAt,
-      updatedAt: bloggerCommunity.updatedAt
+      updatedAt: bloggerCommunity.updatedAt,
     };
   }
 }
