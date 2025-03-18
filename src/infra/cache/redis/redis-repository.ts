@@ -7,7 +7,6 @@ export class RedisRepository implements CacheRepository {
   async delete(key: string): Promise<void> {
     this.redisClient.getClient().del(key);
   }
-
   async get(key: string): Promise<string | null> {
     return this.redisClient.getClient().get(key);
   }
