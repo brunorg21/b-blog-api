@@ -11,4 +11,6 @@ export interface PostRepository {
   delete(post: Post): Promise<void>;
   getPostsWithDetails(params: PaginatedParams): Promise<PostDetails[]>;
   getPostWithComments(id: string): Promise<PostWithComments | null>;
+  getPostsWithDetailsByBlogger(bloggerId: string, params: PaginatedParams): Promise<PostDetails[]>;
+  getLikedPostsWithDetailsByBlogger(bloggerId: string, params: PaginatedParams): Promise<PostDetails[]>;
 }
