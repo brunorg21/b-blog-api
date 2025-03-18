@@ -32,16 +32,19 @@ class TopicRoutes {
         try {
           const topics = req.body;
 
-          await this.topicController.createTopic(
-            topics.map((topic) =>
-              Topic.create({
-                name: topic.name,
-                slug: topic.name,
-              })
-            )
-          );
+          const { topics: createdTopics } =
+            await this.topicController.createTopic(
+              topics.map((topic) =>
+                Topic.create({
+                  name: topic.name,
+                  slug: topic.name,
+                })
+              )
+            );
 
-          return reply.status(201).send();
+          return reply.status(201).send({
+            topics: createdTopics.map(TopicPresenter.toHTTP),
+          });
         } catch (error) {
           reply.send(error);
         }
