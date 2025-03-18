@@ -15,6 +15,7 @@ import { BloggersCommunityPresenter } from "../presenters/bloggers-community-pre
 import { RedisClient } from "@/infra/cache/redis/redis-client";
 import { RedisRepository } from "@/infra/cache/redis/redis-repository";
 import { TypeormCommunityBloggerRepository } from "@/infra/database/typeorm/repositories/typeorm-community-blogger-repository";
+import { BloggersCommunityWithPostsPresenter } from "../presenters/bloggers-community-with-posts-presenter";
 
 class BloggersCommunityRoutes {
   constructor(
@@ -139,56 +140,27 @@ class BloggersCommunityRoutes {
       },
     });
 
-    //GET UNIQUE
-    this.app.withTypeProvider<ZodTypeProvider>().route({
-      method: "GET",
-      url: "/bloggersCommunities/:id",
-      schema: {
-        summary: "Get unique blogger community",
-        tags: ["Bloggers Communities"],
-        security: [{ bearerAuth: [] }],
-        params: paramsBloggersCommunitySchema,
-      },
-
-      handler: async (req, reply) => {
-        try {
-          const { id } = req.params;
-
-          const bloggerCommunity =
-            await this.bloggerCommunityController.getUniqueBloggersCommunity(
-              id
-            );
-
-          return reply.status(200).send({
-            bloggerCommunity:
-              BloggersCommunityPresenter.toHTTP(bloggerCommunity),
-          });
-        } catch (error) {
-          reply.send(error);
-        }
-      },
-    });
     //GET UNIQUE BY SLUG
     this.app.withTypeProvider<ZodTypeProvider>().route({
       method: "GET",
-      url: "/bloggersCommunities/details/:slug",
+      url: "/bloggersCommunities/details",
       schema: {
         summary: "Get unique blogger community by slug",
         tags: ["Bloggers Communities"],
         security: [{ bearerAuth: [] }],
-        params: paramsBloggersCommunityBySlugSchema,
+        querystring: paramsBloggersCommunityBySlugSchema,
       },
 
       handler: async (req, reply) => {
         try {
-          const { slug } = req.params;
+          const { slug } = req.query;
 
           const bloggerCommunity =
             await this.bloggerCommunityController.getBySlug(slug);
 
           return reply.status(200).send({
             bloggerCommunity:
-              BloggersCommunityPresenter.toHTTP(bloggerCommunity),
+              BloggersCommunityWithPostsPresenter.toHTTP(bloggerCommunity),
           });
         } catch (error) {
           reply.send(error);
@@ -230,7 +202,6 @@ class BloggersCommunityRoutes {
         params: paramsBloggersCommunitySchema,
         body: updateBloggerCommunitySchema,
       },
-
       handler: async (req, reply) => {
         try {
           const { id } = req.params;
