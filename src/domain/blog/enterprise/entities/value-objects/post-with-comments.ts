@@ -1,5 +1,4 @@
 import { BloggersCommunity } from "../bloggers-community";
-import { PostComment } from "../post-comment";
 import { Topic } from "../topic";
 import { CommentDetails } from "./comment-details";
 
