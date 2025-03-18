@@ -16,6 +16,62 @@ export class TypeormPostRepository implements PostRepository {
   constructor() {
     this.typeormPostRepository = appDataSource.getRepository(PostEntity);
   }
+  async getPostsWithDetailsByBlogger(
+    bloggerId: string,
+    { page }: PaginatedParams
+  ): Promise<PostDetails[]> {
+    const posts = await this.typeormPostRepository.find({
+      where: {
+        authorId: bloggerId,
+      },
+      order: {
+        createdAt: "ASC",
+      },
+      skip: (page - 1) * 10,
+      take: 10,
+      relations: {
+        author: true,
+        comments: {
+          author: true,
+        },
+        bloggerCommunity: true,
+        postTopics: {
+          topic: true,
+        },
+      },
+    });
+
+    return posts.map((post) => ToTypeormPostDetailsMapper.toDomain(post));
+  }
+  async getLikedPostsWithDetailsByBlogger(
+    bloggerId: string,
+    { page }: PaginatedParams
+  ): Promise<PostDetails[]> {
+    const posts = await this.typeormPostRepository.find({
+      where: {
+        likes: {
+          bloggerId,
+        },
+      },
+      order: {
+        createdAt: "ASC",
+      },
+      skip: (page - 1) * 10,
+      take: 10,
+      relations: {
+        author: true,
+        comments: {
+          author: true,
+        },
+        bloggerCommunity: true,
+        postTopics: {
+          topic: true,
+        },
+      },
+    });
+
+    return posts.map((post) => ToTypeormPostDetailsMapper.toDomain(post));
+  }
   async getPostWithComments(id: string): Promise<PostWithComments | null> {
     const post = await this.typeormPostRepository.findOne({
       where: {
@@ -52,7 +108,7 @@ export class TypeormPostRepository implements PostRepository {
         },
       },
       order: {
-        createdAt: "DESC",
+        createdAt: "ASC",
       },
       skip: (page - 1) * 10,
       take: 10,

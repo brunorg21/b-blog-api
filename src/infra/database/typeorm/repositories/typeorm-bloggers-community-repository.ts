@@ -5,6 +5,8 @@ import { appDataSource } from "..";
 import { BloggerCommunityEntity } from "../schemas/blogger-community";
 import { ToTypeormBloggerCommunityMapper } from "../mappers/toTypeormBloggerCommunityMapper";
 import { CacheRepository } from "@/infra/cache/cache-repository";
+import { BloggerCommunityWithPosts } from "@/domain/blog/enterprise/entities/value-objects/blogger-community-with-posts";
+import { ToTypeormBloggerCommunityWithPostsMapper } from "../mappers/toTypeormBloggerCommunityWithPostsMapper";
 
 export class TypeormBloggerCommunityRepository
   implements BloggersCommunityRepository
@@ -18,6 +20,7 @@ export class TypeormBloggerCommunityRepository
     );
     this.cacheRepository = cacheRepository;
   }
+
   async getByIds(bloggerCommunityIds: string[]): Promise<BloggersCommunity[]> {
     const bloggersCommunities =
       await this.typeormBloggerCommunityRepository.find({
@@ -26,18 +29,32 @@ export class TypeormBloggerCommunityRepository
 
     return bloggersCommunities.map(ToTypeormBloggerCommunityMapper.toDomain);
   }
-  async getBySlug(slug: string): Promise<BloggersCommunity | null> {
+  async getBySlug(slug: string): Promise<BloggerCommunityWithPosts | null> {
     const cachedBloggerCommunity = await this.cacheRepository.get(
       `blogger-community-${slug}`
     );
     if (cachedBloggerCommunity) {
-      return JSON.parse(cachedBloggerCommunity);
+      const bloggerCommunityCachedParse = JSON.parse(cachedBloggerCommunity);
+
+      return ToTypeormBloggerCommunityWithPostsMapper.toDomain(
+        bloggerCommunityCachedParse
+      );
     }
 
     const bloggerCommunity =
       await this.typeormBloggerCommunityRepository.findOne({
         where: {
           slug,
+        },
+        relations: {
+          posts: {
+            author: true,
+            bloggerCommunity: true,
+            postTopics: {
+              topic: true,
+            },
+          },
+          author: true,
         },
       });
 
@@ -50,7 +67,7 @@ export class TypeormBloggerCommunityRepository
       JSON.stringify(bloggerCommunity)
     );
 
-    return ToTypeormBloggerCommunityMapper.toDomain(bloggerCommunity);
+    return ToTypeormBloggerCommunityWithPostsMapper.toDomain(bloggerCommunity);
   }
   async getAll(): Promise<BloggersCommunity[]> {
     const bloggerCommunities =
@@ -59,14 +76,16 @@ export class TypeormBloggerCommunityRepository
     return bloggerCommunities.map(ToTypeormBloggerCommunityMapper.toDomain);
   }
 
-  async save(bloggersCommunity: BloggersCommunity): Promise<void> {
-    this.typeormBloggerCommunityRepository.save({
+  async save(bloggersCommunity: BloggersCommunity): Promise<BloggersCommunity> {
+    const bloggerCommunity = await this.typeormBloggerCommunityRepository.save({
       authorId: bloggersCommunity.authorId,
       avatarUrl: bloggersCommunity.avatarUrl,
       description: bloggersCommunity.description,
       name: bloggersCommunity.name,
       slug: bloggersCommunity.slug,
     });
+
+    return ToTypeormBloggerCommunityMapper.toDomain(bloggerCommunity);
   }
   async getById(bloggerCommunityId: string): Promise<BloggersCommunity | null> {
     const bloggerComunity =
