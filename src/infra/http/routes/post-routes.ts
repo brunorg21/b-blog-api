@@ -173,6 +173,69 @@ class PostRoutes {
         }
       },
     });
+
+    //GET POSTS BY BLOGGER
+    this.app.withTypeProvider<ZodTypeProvider>().route({
+      method: "GET",
+      url: "/posts/blogger",
+      schema: {
+        summary: "List posts by blogger",
+        tags: ["Posts"],
+        security: [{ bearerAuth: [] }],
+        querystring: queryPostSchema,
+      },
+
+      handler: async (req, reply) => {
+        try {
+          const { page } = req.query;
+
+          const posts = await this.postController.getPostsWithDetailsByBlogger(
+            {
+              page: page!,
+            },
+            req.user.sub
+          );
+
+          return reply.status(200).send({
+            posts: posts.map(PostDetailsPresenter.toHTTP),
+          });
+        } catch (error) {
+          reply.send(error);
+        }
+      },
+    });
+    //GET LIKED POSTS BY BLOGGER
+    this.app.withTypeProvider<ZodTypeProvider>().route({
+      method: "GET",
+      url: "/posts/liked",
+      schema: {
+        summary: "List liked posts",
+        tags: ["Posts"],
+        security: [{ bearerAuth: [] }],
+        querystring: queryPostSchema,
+      },
+
+      handler: async (req, reply) => {
+        try {
+          const { page } = req.query;
+
+          const posts =
+            await this.postController.getLikedPostsWithDetailsByBlogger(
+              {
+                page: page!,
+              },
+              req.user.sub
+            );
+
+          return reply.status(200).send({
+            posts: posts.map(PostDetailsPresenter.toHTTP),
+          });
+        } catch (error) {
+          reply.send(error);
+        }
+      },
+    });
+
     //DELETE
     this.app.withTypeProvider<ZodTypeProvider>().route({
       method: "DELETE",
