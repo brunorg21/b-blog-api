@@ -1,13 +1,13 @@
-import { BloggersCommunity } from "@/domain/blog/enterprise/entities/bloggers-community";
 import { BloggersCommunityRepository } from "../../repositories/bloggers-community-repository";
 import { ResourceNotFoundError } from "../@errors/resource-not-found-error";
+import { BloggerCommunityWithPosts } from "@/domain/blog/enterprise/entities/value-objects/blogger-community-with-posts";
 
 interface GetUniqueBloggersCommunityUseCaseRequest {
   id: string;
 }
 
 interface GetUniqueBloggersCommunityUseCaseResponse {
-  bloggersCommunity: BloggersCommunity;
+  bloggersCommunity: BloggerCommunityWithPosts;
 }
 
 export class GetUniqueBloggersCommunityUseCase {
@@ -17,9 +17,8 @@ export class GetUniqueBloggersCommunityUseCase {
   async execute({
     id,
   }: GetUniqueBloggersCommunityUseCaseRequest): Promise<GetUniqueBloggersCommunityUseCaseResponse> {
-    const bloggersCommunity = await this.bloggersCommunityRepository.getById(
-      id
-    );
+    const bloggersCommunity =
+      await this.bloggersCommunityRepository.getBloggersCommunityWithPosts(id);
 
     if (!bloggersCommunity) {
       throw new ResourceNotFoundError();
