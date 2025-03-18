@@ -1,9 +1,4 @@
-import {
-  Column,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { PostTopicsEntity } from "./post-topics";
 
 @Entity("topics")
@@ -17,7 +12,6 @@ export class TopicEntity {
   name: string;
 
   @Column({
-    unique: true,
     type: "text",
   })
   slug: string;
