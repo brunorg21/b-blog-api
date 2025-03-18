@@ -20,6 +20,8 @@ import { PostWithComments } from "@/domain/blog/enterprise/entities/value-object
 import { LikePostUseCase } from "@/domain/blog/app/use-cases/post/like-post-use-case";
 import { PostLikeRepository } from "@/domain/blog/app/repositories/post-like-repository";
 import { RemoveLikePostUseCase } from "@/domain/blog/app/use-cases/post/remove-like-post-use-case";
+import { GetLikedPostsWithDetailsByBloggerUseCase } from "@/domain/blog/app/use-cases/post/get-liked-posts-with-details-by-blogger-use-case";
+import { GetPostWithDetailsByBloggerUseCase } from "@/domain/blog/app/use-cases/post/get-posts-with-details-by-blogger-use-case";
 
 export class PostController
   implements ControllerBase<Post>, PostControllerInterface
@@ -27,6 +29,8 @@ export class PostController
   private readonly createPostUseCase: CreatePostUseCase;
   private readonly updatePostUseCase: UpdatePostUseCase;
   private readonly deletePostUseCase: DeletePostUseCase;
+  private readonly getLikedPostsWithDetailsByBloggerUseCase: GetLikedPostsWithDetailsByBloggerUseCase;
+  private readonly getPostsWithDetailsByBloggerUseCase: GetPostWithDetailsByBloggerUseCase;
   private readonly getPostsUseCase: GetPostsUseCase;
   private readonly getPostsWithDetailsUseCase: GetPostsWithDetailsUseCase;
   private readonly getPostWithCommentsUseCase: GetPostWithCommentsUseCase;
@@ -42,6 +46,10 @@ export class PostController
       postRepository,
       postTopicsRepository
     );
+    this.getLikedPostsWithDetailsByBloggerUseCase =
+      new GetLikedPostsWithDetailsByBloggerUseCase(postRepository);
+    this.getPostsWithDetailsByBloggerUseCase =
+      new GetPostWithDetailsByBloggerUseCase(postRepository);
     this.updatePostUseCase = new UpdatePostUseCase(
       postRepository,
       bloggerRepository,
@@ -67,6 +75,29 @@ export class PostController
       postRepository,
       postLikeRepository
     );
+  }
+  async getLikedPostsWithDetailsByBlogger(
+    params: PaginatedParams,
+    bloggerId: string
+  ): Promise<PostDetails[]> {
+    const { posts } =
+      await this.getLikedPostsWithDetailsByBloggerUseCase.execute({
+        params,
+        bloggerId,
+      });
+
+    return posts;
+  }
+  async getPostsWithDetailsByBlogger(
+    params: PaginatedParams,
+    bloggerId: string
+  ): Promise<PostDetails[]> {
+    const { posts } = await this.getPostsWithDetailsByBloggerUseCase.execute({
+      params,
+      bloggerId,
+    });
+
+    return posts;
   }
 
   async getPostWithComments(id: string): Promise<PostWithComments> {

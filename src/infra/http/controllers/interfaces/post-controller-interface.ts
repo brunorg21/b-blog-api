@@ -20,6 +20,14 @@ export interface LikePostProps {
 export interface PostControllerInterface {
   getPosts(params: PaginatedParams): Promise<Post[]>;
   getPostsDetails(params: PaginatedParams): Promise<PostDetails[]>;
+  getLikedPostsWithDetailsByBlogger(
+    params: PaginatedParams,
+    bloggerId: string
+  ): Promise<PostDetails[]>;
+  getPostsWithDetailsByBlogger(
+    params: PaginatedParams,
+    bloggerId: string
+  ): Promise<PostDetails[]>;
   getPostWithComments(id: string): Promise<PostWithComments>;
   updatePost(props: UpdatePostProps): Promise<void>;
   likePost(props: LikePostProps): Promise<void>;
