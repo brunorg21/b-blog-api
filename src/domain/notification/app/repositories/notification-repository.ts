@@ -5,4 +5,5 @@ export interface NotificationRepository {
   save(notification: Notification): Promise<void>;
   getById(notificationId: string): Promise<Notification | null>;
   delete(notification: Notification): Promise<void>;
+  findManyByRecipient(recipientId: string): Promise<Notification[]>;
 }

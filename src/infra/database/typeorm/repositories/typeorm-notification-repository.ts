@@ -13,6 +13,15 @@ export class TypeormNotificationRepository implements NotificationRepository {
     this.typeormNotificationRepository =
       appDataSource.getRepository(NotificationEntity);
   }
+  async findManyByRecipient(recipientId: string): Promise<Notification[]> {
+    const notifications = await this.typeormNotificationRepository.find({
+      where: {
+        recipientId,
+      },
+    });
+
+    return notifications.map(ToTypeormNotificationMapper.toDomain);
+  }
 
   async save(notification: Notification): Promise<void> {
     const typeormNotification =
@@ -37,6 +46,9 @@ export class TypeormNotificationRepository implements NotificationRepository {
   }
 
   async delete(notification: Notification): Promise<void> {
-    await this.typeormNotificationRepository.remove(notification);
+    const notificationEntity =
+      ToTypeormNotificationMapper.toNotificationEntity(notification);
+
+    await this.typeormNotificationRepository.remove(notificationEntity);
   }
 }
