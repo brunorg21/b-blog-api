@@ -16,6 +16,18 @@ export class TypeormPostRepository implements PostRepository {
   constructor() {
     this.typeormPostRepository = appDataSource.getRepository(PostEntity);
   }
+  async verifyLikedPost(bloggerId: string, postId: string): Promise<boolean> {
+    const hasLiked = await this.typeormPostRepository.findOne({
+      where: {
+        id: postId,
+        likes: {
+          bloggerId,
+        },
+      },
+    });
+
+    return !!hasLiked;
+  }
   async getPostsWithDetailsByBlogger(
     bloggerId: string,
     { page }: PaginatedParams
@@ -31,9 +43,6 @@ export class TypeormPostRepository implements PostRepository {
       take: 10,
       relations: {
         author: true,
-        comments: {
-          author: true,
-        },
         bloggerCommunity: true,
         postTopics: {
           topic: true,

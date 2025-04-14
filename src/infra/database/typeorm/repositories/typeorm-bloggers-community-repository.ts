@@ -7,17 +7,21 @@ import { ToTypeormBloggerCommunityMapper } from "../mappers/toTypeormBloggerComm
 import { CacheRepository } from "@/infra/cache/cache-repository";
 import { BloggerCommunityWithPosts } from "@/domain/blog/enterprise/entities/value-objects/blogger-community-with-posts";
 import { ToTypeormBloggerCommunityWithPostsMapper } from "../mappers/toTypeormBloggerCommunityWithPostsMapper";
+import { PaginatedParams } from "@/core/params";
+import { PostEntity } from "../schemas/post";
 
 export class TypeormBloggerCommunityRepository
   implements BloggersCommunityRepository
 {
   private typeormBloggerCommunityRepository: Repository<BloggerCommunityEntity>;
+  private typeormPostRepository: Repository<PostEntity>;
   private cacheRepository: CacheRepository;
 
   constructor(cacheRepository: CacheRepository) {
     this.typeormBloggerCommunityRepository = appDataSource.getRepository(
       BloggerCommunityEntity
     );
+    this.typeormPostRepository = appDataSource.getRepository(PostEntity);
     this.cacheRepository = cacheRepository;
   }
 
@@ -29,17 +33,20 @@ export class TypeormBloggerCommunityRepository
 
     return bloggersCommunities.map(ToTypeormBloggerCommunityMapper.toDomain);
   }
-  async getBySlug(slug: string): Promise<BloggerCommunityWithPosts | null> {
+  async getBySlug(
+    slug: string,
+    { page }: PaginatedParams
+  ): Promise<BloggerCommunityWithPosts | null> {
     const cachedBloggerCommunity = await this.cacheRepository.get(
       `blogger-community-${slug}`
     );
-    if (cachedBloggerCommunity) {
-      const bloggerCommunityCachedParse = JSON.parse(cachedBloggerCommunity);
+    // if (cachedBloggerCommunity) {
+    //   const bloggerCommunityCachedParse = JSON.parse(cachedBloggerCommunity);
 
-      return ToTypeormBloggerCommunityWithPostsMapper.toDomain(
-        bloggerCommunityCachedParse
-      );
-    }
+    //   return ToTypeormBloggerCommunityWithPostsMapper.toDomain(
+    //     bloggerCommunityCachedParse
+    //   );
+    // }
 
     const bloggerCommunity =
       await this.typeormBloggerCommunityRepository.findOne({
@@ -61,6 +68,28 @@ export class TypeormBloggerCommunityRepository
     if (!bloggerCommunity) {
       return null;
     }
+
+    const posts = await this.typeormPostRepository.find({
+      where: {
+        bloggerCommunity: {
+          id: bloggerCommunity.id,
+        },
+      },
+      relations: {
+        author: true,
+        bloggerCommunity: true,
+        postTopics: {
+          topic: true,
+        },
+      },
+      order: {
+        createdAt: "ASC",
+      },
+      skip: (page - 1) * 10,
+      take: 10,
+    });
+
+    bloggerCommunity.posts = posts;
 
     await this.cacheRepository.set(
       `blogger-community-${slug}`,
