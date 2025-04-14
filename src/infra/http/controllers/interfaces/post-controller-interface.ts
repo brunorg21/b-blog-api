@@ -32,4 +32,5 @@ export interface PostControllerInterface {
   updatePost(props: UpdatePostProps): Promise<void>;
   likePost(props: LikePostProps): Promise<void>;
   removeLikePost(props: LikePostProps): Promise<void>;
+  verifyLikedPost(bloggerId: string, postId: string): Promise<boolean>;
 }

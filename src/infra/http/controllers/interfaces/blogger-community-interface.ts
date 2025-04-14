@@ -1,3 +1,4 @@
+import { PaginatedParams } from "@/core/params";
 import { BloggersCommunity } from "@/domain/blog/enterprise/entities/bloggers-community";
 import { BloggerCommunityWithPosts } from "@/domain/blog/enterprise/entities/value-objects/blogger-community-with-posts";
 
@@ -16,7 +17,10 @@ export interface BloggerCommunityControllerInterface {
     data: UpdateBloggersCommunityRequest,
     bloggerId: string
   ): void;
-  getBySlug(slug: string): Promise<BloggerCommunityWithPosts>;
+  getBySlug(
+    slug: string,
+    params: PaginatedParams
+  ): Promise<BloggerCommunityWithPosts>;
   getBloggerCommunitiesByBlogger(
     bloggerId: string
   ): Promise<BloggersCommunity[]>;
