@@ -42,7 +42,7 @@ export class OnLikeCommentEvent {
     });
 
     this.socket.emit(
-      `invite-to-blogger-community-${notification?.recipientId}`,
+      `like-comment-${notification?.recipientId}`,
       notification
     );
   }
