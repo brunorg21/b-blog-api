@@ -1,3 +1,4 @@
+import { PaginatedParams } from "@/core/params";
 import { BloggersCommunity } from "../../enterprise/entities/bloggers-community";
 import { BloggerCommunityWithPosts } from "../../enterprise/entities/value-objects/blogger-community-with-posts";
 
@@ -8,6 +9,9 @@ export interface BloggersCommunityRepository {
   delete(bloggersCommunity: BloggersCommunity): Promise<void>;
   getAllByAuthorId(bloggerId: string): Promise<BloggersCommunity[]>;
   getAll(): Promise<BloggersCommunity[]>;
-  getBySlug(slug: string): Promise<BloggerCommunityWithPosts | null>;
+  getBySlug(
+    slug: string,
+    params: PaginatedParams
+  ): Promise<BloggerCommunityWithPosts | null>;
   getByIds(bloggerCommunityIds: string[]): Promise<BloggersCommunity[]>;
 }
