@@ -18,6 +18,7 @@ import { communityBloggerRoutes } from "./http/routes/community-blogger-routes";
 import { wsApp } from "./ws/web-socket";
 import { postCommentRoutes } from "./http/routes/post-comment-routes";
 import { env } from "@/env";
+import { notificationRoutes } from "./http/routes/notification-routes";
 
 export const initializeServer = async () => {
   try {
@@ -43,7 +44,7 @@ export const initializeServer = async () => {
   await app.register(fastifyCors, {
     origin: "*",
     allowedHeaders: ["Content-Type", "Authorization"],
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   });
 
   app.setValidatorCompiler(validatorCompiler);
@@ -85,6 +86,7 @@ export const initializeServer = async () => {
   app.register((server) => bloggersCommunityRoutes(server).listen());
   app.register((server) => communityBloggerRoutes(server).listen());
   app.register((server) => postCommentRoutes(server).listen());
+  app.register((server) => notificationRoutes(server).listen());
 
   try {
     await app.listen({
