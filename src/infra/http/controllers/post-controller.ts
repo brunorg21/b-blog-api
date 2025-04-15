@@ -22,6 +22,7 @@ import { PostLikeRepository } from "@/domain/blog/app/repositories/post-like-rep
 import { RemoveLikePostUseCase } from "@/domain/blog/app/use-cases/post/remove-like-post-use-case";
 import { GetLikedPostsWithDetailsByBloggerUseCase } from "@/domain/blog/app/use-cases/post/get-liked-posts-with-details-by-blogger-use-case";
 import { GetPostWithDetailsByBloggerUseCase } from "@/domain/blog/app/use-cases/post/get-posts-with-details-by-blogger-use-case";
+import { VerifyLikedPostUseCase } from "@/domain/blog/app/use-cases/post/verify-liked-post-use-case";
 
 export class PostController
   implements ControllerBase<Post>, PostControllerInterface
@@ -36,6 +37,7 @@ export class PostController
   private readonly getPostWithCommentsUseCase: GetPostWithCommentsUseCase;
   private readonly likePostUseCase: LikePostUseCase;
   private readonly removeLikePostUseCase: RemoveLikePostUseCase;
+  private readonly verifyLikedPostUseCase: VerifyLikedPostUseCase;
   constructor(
     postRepository: PostRepository,
     postTopicsRepository: PostTopicsRepository,
@@ -75,6 +77,15 @@ export class PostController
       postRepository,
       postLikeRepository
     );
+    this.verifyLikedPostUseCase = new VerifyLikedPostUseCase(postRepository);
+  }
+  async verifyLikedPost(bloggerId: string, postId: string): Promise<boolean> {
+    const { hasLiked } = await this.verifyLikedPostUseCase.execute({
+      bloggerId,
+      postId,
+    });
+
+    return hasLiked;
   }
   async getLikedPostsWithDetailsByBlogger(
     params: PaginatedParams,

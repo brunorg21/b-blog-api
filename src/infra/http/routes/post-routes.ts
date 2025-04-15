@@ -92,6 +92,35 @@ class PostRoutes {
       },
     });
 
+    //VERIFY LIKED POST
+    this.app.withTypeProvider<ZodTypeProvider>().route({
+      method: "GET",
+      url: "/posts/verify-liked/:id",
+      schema: {
+        summary: "Verify liked post",
+        tags: ["Posts"],
+        security: [{ bearerAuth: [] }],
+        params: paramsPostSchema,
+      },
+
+      handler: async (req, reply) => {
+        try {
+          const { id } = req.params;
+
+          const hasLiked = await this.postController.verifyLikedPost(
+            req.user.sub,
+            id
+          );
+
+          return reply.status(200).send({
+            hasLiked,
+          });
+        } catch (error) {
+          reply.send(error);
+        }
+      },
+    });
+
     //PATCH
     this.app.withTypeProvider<ZodTypeProvider>().route({
       method: "PATCH",
