@@ -16,6 +16,7 @@ import { GetBloggersCommunityBySlugUseCase } from "@/domain/blog/app/use-cases/b
 import { GetAllBloggersCommunitiesByBloggerUseCase } from "@/domain/blog/app/use-cases/blogger-community/get-all-bloggers-community-by-blogger-use-case";
 import { CommunityBloggerRepository } from "@/domain/blog/app/repositories/community-blogger-repository";
 import { BloggerCommunityWithPosts } from "@/domain/blog/enterprise/entities/value-objects/blogger-community-with-posts";
+import { PaginatedParams } from "@/core/params";
 
 export class BloggerCommunityController
   implements
@@ -62,9 +63,9 @@ export class BloggerCommunityController
         communityRepository
       );
   }
-  async getBySlug(slug: string): Promise<BloggerCommunityWithPosts> {
+  async getBySlug(slug: string, params: PaginatedParams): Promise<BloggerCommunityWithPosts> {
     const { bloggersCommunity } =
-      await this.getBloggersCommunityBySlugUseCase.execute({ slug });
+      await this.getBloggersCommunityBySlugUseCase.execute({ slug , params});
 
     return bloggersCommunity;
   }
