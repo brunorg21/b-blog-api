@@ -16,8 +16,9 @@ export const paramsBloggersCommunitySchema = z.object({
 });
 export const paramsBloggersCommunityBySlugSchema = z.object({
   slug: z.string(),
+  page: z.coerce.number().optional().default(1),
 });
 
 export const queryPostSchema = z.object({
-  page: z.coerce.number().default(1).optional(),
+  page: z.coerce.number().optional().default(1),
 });

@@ -153,10 +153,10 @@ class BloggersCommunityRoutes {
 
       handler: async (req, reply) => {
         try {
-          const { slug } = req.query;
+          const { slug, page } = req.query;
 
           const bloggerCommunity =
-            await this.bloggerCommunityController.getBySlug(slug);
+            await this.bloggerCommunityController.getBySlug(slug, { page });
 
           return reply.status(200).send({
             bloggerCommunity:
