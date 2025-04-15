@@ -6,6 +6,11 @@ import { TypeormNotificationRepository } from "../database/typeorm/repositories/
 import { OnInviteToBloggerCommunityEvent } from "./events/on-invite-to-blogger-community-event";
 import { RedisClient } from "../cache/redis/redis-client";
 import { RedisRepository } from "../cache/redis/redis-repository";
+import {
+  LikePostNotification,
+  OnLikePostEvent,
+} from "./events/on-like-post-event";
+import { TypeormPostRepository } from "../database/typeorm/repositories/typeorm-post-repository";
 
 export const wsApp = createServer();
 
@@ -15,20 +20,38 @@ const io = new Server(wsApp, {
   },
 });
 
+export const userSocketMap = new Map();
+
 io.on("connection", (socket) => {
   const redis = RedisClient.getInstance();
 
   const redisRepository = new RedisRepository(redis);
 
-  const event = new OnInviteToBloggerCommunityEvent(
+  const inviteBloggerEvent = new OnInviteToBloggerCommunityEvent(
     socket,
     new TypeormBloggerCommunityRepository(redisRepository),
     new TypeormBloggerRepository(),
     new TypeormNotificationRepository()
   );
 
+  const likePostEvent = new OnLikePostEvent(
+    socket,
+    new TypeormPostRepository(),
+    new TypeormBloggerRepository(),
+    new TypeormNotificationRepository()
+  );
+
+  socket.on("register-blogger", (authorId) => {
+    console.log(`Registrando usuário ${authorId} com socket ${socket.id}`);
+    userSocketMap.set(authorId, socket.id);
+  });
+
   socket.on("send", async (data) => {
-    event.dispatch(data);
+    inviteBloggerEvent.dispatch(data);
+  });
+
+  socket.on("new-like-post", async (data: LikePostNotification) => {
+    likePostEvent.dispatch(data);
   });
 });
 
